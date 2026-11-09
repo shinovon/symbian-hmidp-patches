@@ -19,11 +19,11 @@
 #ifdef EKA2
 #define sizeof_Runtime 48
 #define sizeof_Runtime_vtable 64
-#define KJavaRegistryNewLOrdinal 5
+#define MJavaRegistry_CreateL 5
 #else
 #define sizeof_Runtime 30
 #define sizeof_Runtime_vtable 64
-#define KJavaRegistryNewLOrdinal 3
+#define MJavaRegistry_CreateL 3
 #endif
 
 _LIT(KIsAppInstalledPrefix, "cc.nnproject.symbianext.isAppInstalled:");
@@ -368,7 +368,7 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	}
 	CleanupClosePushL(lib);
 	
-	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
+	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
@@ -420,7 +420,7 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 	}
 	CleanupClosePushL(lib);
 	
-	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
+	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
@@ -446,7 +446,7 @@ static void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aM
 	User::LeaveIfError(lib.Load(_L("javaregistry.dll")));
 	CleanupClosePushL(lib);
 		
-	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
+	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();

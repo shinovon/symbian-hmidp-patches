@@ -1,6 +1,8 @@
 jvm s60v2.8 improvements patch
 
 exe extracted from nokia n72, was already epoc format
+SHA1: 7aade12753e81ceabf3266c27e92598b012a9b6e
+1898172 bytes
 
 unpacked
 added -comp to force AoT

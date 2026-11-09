@@ -1,8 +1,11 @@
 jvm uiq 3.0 improvements patch
 
 exe extracted from se p1i, was already epoc format
+SHA1: 695bb9a44e4280ff9d9df81d06fdcaaf3727a502
+1203722 bytes, 2304924 bytes unpacked
 
 unpacked
+added -UseVerifier to disable preverification
 added -comp to force AoT
 increased bytecode size limit for jit compilation from 6000 to 65535
 removed connection filters for 80 and 443 ports access

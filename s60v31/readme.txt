@@ -1,6 +1,8 @@
 jvm s60v3.1 improvements patch
 
 exe extracted from nokia e71, was already epoc format
+SHA1: 85f21f7edadb7f5accad53543de8d404d8d7cba5
+1427225 bytes, 2716428 bytes unpacked
 
 unpacked
 added -UseVerifier to disable preverification
