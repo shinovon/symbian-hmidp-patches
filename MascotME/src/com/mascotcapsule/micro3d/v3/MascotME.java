@@ -5,24 +5,20 @@
 
 package com.mascotcapsule.micro3d.v3;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 class MascotME {
 	static String version = "MascotME 1.1.1";
 	
 	// Debug options:
 	
 	// FPS counter.
-	static boolean showFPS = false;
+//	static boolean showFPS = false;
 	
 	// Detailed frametime metrics.
 	// Includes Graphic3D.bind, .flush, .release calls, and figure, primitives, command lists submitting.
-	static boolean showTimeMetrics = false;
+//	static boolean showTimeMetrics = false;
 	
 	// Heap memory usage. Warning, can reduce performance.
-	static boolean showHeapUsage = false;
+//	static boolean showHeapUsage = false;
 	
 	// Enhancements:
 	
@@ -87,105 +83,4 @@ class MascotME {
 	// noBlending hides polygons and sprites with blending enabled.
 	static boolean noLighting = false, noEnvMapping = false, noBlending = false;
 	
-	static boolean embedded = true;
-	
-	static {
-		if (!embedded) loadSettings();
-	}
-	
-	private static final void parseKey(String key, String value) {
-		try {
-			if (key.equals("showFPS")) {
-				showFPS = Integer.parseInt(value) == 1;
-			} else if (key.equals("showTimeMetrics")) {
-				showTimeMetrics = Integer.parseInt(value) == 1;
-			} else if (key.equals("showHeapUsage")) {
-				showHeapUsage = Integer.parseInt(value) == 1;
-			} else if (key.equals("horizontalFovFix")) {
-				horizontalFovFix = Integer.parseInt(value) == 1;
-			} else if (key.equals("fbClearColor")) {
-				fbClearColor = Integer.parseInt(value, 16);
-			} else if (key.equals("fbSizeWorkaround")) {
-				fbSizeWorkaround = Integer.parseInt(value) == 1;
-			} else if (key.equals("halfResRender")) {
-				halfResRender = Integer.parseInt(value) == 1;
-			} else if (key.equals("no2DInbetween")) {
-				no2DInbetween = Integer.parseInt(value) == 1;
-			} else if (key.equals("overwrite2D")) {
-				overwrite2D = Integer.parseInt(value) == 1;
-			} else if (key.equals("doNotClear")) {
-				doNotClear = Integer.parseInt(value) == 1;
-			} else if (key.equals("useArrayCopyClear")) {
-				useArrayCopyClear = Integer.parseInt(value) == 1;
-			} else if (key.equals("noNearClipping")) {
-				noNearClipping = Integer.parseInt(value) == 1;
-			} else if (key.equals("noFarClipping")) {
-				noFarClipping = Integer.parseInt(value) == 1;
-			} else if (key.equals("noToonSplitting")) {
-				noToonSplitting = Integer.parseInt(value) == 1;
-			} else if (key.equals("noLighting")) {
-				noLighting = Integer.parseInt(value) == 1;
-			} else if (key.equals("noEnvMapping")) {
-				noEnvMapping = Integer.parseInt(value) == 1;
-			} else if (key.equals("noBlending")) {
-				noBlending = Integer.parseInt(value) == 1;
-			} else {
-				throw new IllegalArgumentException(key);
-			}
-		} catch (NumberFormatException e) {
-			throw new NumberFormatException(key + " = " + value);
-		}
-	}
-	
-	private static final void loadSettings() {
-		InputStream is = null;
-		
-		try {
-			is = (new Object()).getClass().getResourceAsStream("/mascotme.ini");
-			if (is == null) return;
-			
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte[] buffer = new byte[Math.max(1024, is.available())];
-
-			int len;
-			while ((len = is.read(buffer)) != -1) {
-				baos.write(buffer, 0, len);
-			}
-			
-			String iniText = new String(baos.toByteArray());
-			
-			for (int start = 0; start < iniText.length(); ) {
-				int lineEnd = iniText.indexOf('\n', start);
-				if (lineEnd == -1) lineEnd = iniText.length();
-				
-				int tmp = start;
-				start = lineEnd + 1;
-				try {
-					String line = iniText.substring(tmp, lineEnd);
-
-					line = line.trim();
-					if (line.length() == 0) continue;
-					if (line.charAt(0) == '#') continue;
-					if (line.charAt(0) == ';') continue;
-
-					int equalsIdx = line.indexOf('=');
-					if (equalsIdx == -1) throw new IllegalArgumentException(line);
-
-					String key = line.substring(0, equalsIdx).trim();
-					String value = line.substring(equalsIdx + 1).trim();
-					
-					parseKey(key, value);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (is != null) is.close();
-			} catch (IOException e) {}
-		}
-	}
 }

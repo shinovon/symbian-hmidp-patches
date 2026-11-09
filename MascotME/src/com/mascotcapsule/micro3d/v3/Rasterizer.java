@@ -5,7 +5,7 @@
 //SEE codegen DIRECTORY
 package com.mascotcapsule.micro3d.v3;
 
-public class Rasterizer {
+class Rasterizer {
 
 	static final int fp = 12, FP = 1 << fp;
 	private static final int shadeFpShift = fp - 8;

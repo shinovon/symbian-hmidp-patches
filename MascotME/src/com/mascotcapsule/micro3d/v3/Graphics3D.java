@@ -93,11 +93,11 @@ public class Graphics3D {
 	private int fbDrawCounter;
 //	private DummyCanvas dummyCanvas;
 	
-	private long prevStatsCheck;
-	private int framesCount, fps, frameTime;
-	private int bindAccum, figureAccum, primCmdAccum, flushAccum, releaseAccum;
-	private int bindTime, figureTime, primCmdTime, flushTime, releaseTime;
-	private int heapUsage;
+//	private long prevStatsCheck;
+//	private int framesCount, fps, frameTime;
+//	private int bindAccum, figureAccum, primCmdAccum, flushAccum, releaseAccum;
+//	private int bindTime, figureTime, primCmdTime, flushTime, releaseTime;
+//	private int heapUsage;
 	
 	private boolean disposed;
 
@@ -311,7 +311,7 @@ public class Graphics3D {
 		if (graphics == null) throw new NullPointerException();
 		if (boundGraphics != null) throw new IllegalStateException();
 		
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 
 		boundGraphics = graphics;
 		
@@ -381,7 +381,7 @@ public class Graphics3D {
 			clearFB(color);
 		}
 		
-		bindAccum += (int) (System.currentTimeMillis() - startTime);
+//		bindAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 	
 	private final void clearFB(int color) {
@@ -484,7 +484,7 @@ public class Graphics3D {
 		if (disposed) return;
 		if (boundGraphics == null) throw new IllegalStateException();
 		
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		
 		if (sortPrimCount > 0) {
 			//Clear fb alpha when necessary
@@ -531,7 +531,7 @@ public class Graphics3D {
 		bindTextures = 0;
 		g3dSphereTex = efxSphereTex = null;
 		
-		flushAccum += (int) (System.currentTimeMillis() - startTime);
+//		flushAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 
 	public final void release(Graphics graphics) {
@@ -539,14 +539,14 @@ public class Graphics3D {
 		if (graphics == null) throw new NullPointerException();
 		if (graphics != boundGraphics) throw new IllegalArgumentException();
 		
-		boolean showSomeStats = MascotME.showFPS | MascotME.showTimeMetrics | MascotME.showHeapUsage;
+//		boolean showSomeStats = MascotME.showFPS | MascotME.showTimeMetrics | MascotME.showHeapUsage;
 		
-		if (!MascotME.no2DInbetween && !showSomeStats) {
+		if (!MascotME.no2DInbetween /*&& !showSomeStats*/) {
 			boundGraphics = null;
 			return;
 		}
 		
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		
 		int prevClipX = graphics.getClipX();
 		int prevClipY = graphics.getClipY();
@@ -562,80 +562,80 @@ public class Graphics3D {
 			drawFB(0, 0, fbWidth, MascotME.halfResRender ? fbHeight * 2 : fbHeight);
 		}
 		
-		if (showSomeStats) {
-			long time = System.currentTimeMillis();
-			
-			framesCount++;
-			if (time - prevStatsCheck >= 1000) {
-				if (MascotME.showFPS) {
-					fps = framesCount * 1000 / (int) (time - prevStatsCheck);
-					frameTime = (int) (time - prevStatsCheck) * 10 / framesCount;
-				}
-				
-				if (MascotME.showTimeMetrics) {
-					bindTime = bindAccum / framesCount;
-					figureTime = figureAccum / framesCount;
-					primCmdTime = primCmdAccum / framesCount;
-					flushTime = flushAccum / framesCount;
-					releaseTime = releaseAccum / framesCount;
-					
-					bindAccum = figureAccum = 0;
-					primCmdAccum = flushAccum = releaseAccum = 0;
-				}
-				
-				if (MascotME.showHeapUsage) {
-					Runtime runtime = Runtime.getRuntime();
-					heapUsage = (int) ((runtime.totalMemory() - runtime.freeMemory()) >> 10);
-				}
-				
-				prevStatsCheck = time;
-				framesCount = 0;
-			}
-			
-			int prevColor = graphics.getColor();
-			int fontH = graphics.getFont().getHeight();
-			int drawY = 0;
-			
-			if (MascotME.showTimeMetrics) {
-				drawStatsText("Bind: " + bindTime, 0, drawY, graphics);
-				drawY += fontH;
-				drawStatsText("Figure: " + figureTime, 0, drawY, graphics);
-				drawY += fontH;
-				drawStatsText("PrimCmd: " + primCmdTime, 0, drawY, graphics);
-				drawY += fontH;
-				drawStatsText("Flush: " + flushTime, 0, drawY, graphics);
-				drawY += fontH;
-				drawStatsText("Release: " + releaseTime, 0, drawY, graphics);
-				drawY += fontH;
-			}
-			
-			if (MascotME.showHeapUsage) {
-				drawStatsText("Heap: " + heapUsage + " kb", 0, drawY, graphics);
-				drawY += fontH;
-			}
-			
-			if (MascotME.showFPS) {
-				drawStatsText("FPS: " + fps + " / " + frameTime, 0, drawY, graphics);
-				drawY += fontH;
-			}
-			
-			graphics.setColor(prevColor);
-		}
+//		if (showSomeStats) {
+//			long time = System.currentTimeMillis();
+//			
+//			framesCount++;
+//			if (time - prevStatsCheck >= 1000) {
+//				if (MascotME.showFPS) {
+//					fps = framesCount * 1000 / (int) (time - prevStatsCheck);
+//					frameTime = (int) (time - prevStatsCheck) * 10 / framesCount;
+//				}
+//				
+//				if (MascotME.showTimeMetrics) {
+//					bindTime = bindAccum / framesCount;
+//					figureTime = figureAccum / framesCount;
+//					primCmdTime = primCmdAccum / framesCount;
+//					flushTime = flushAccum / framesCount;
+//					releaseTime = releaseAccum / framesCount;
+//					
+//					bindAccum = figureAccum = 0;
+//					primCmdAccum = flushAccum = releaseAccum = 0;
+//				}
+//				
+//				if (MascotME.showHeapUsage) {
+//					Runtime runtime = Runtime.getRuntime();
+//					heapUsage = (int) ((runtime.totalMemory() - runtime.freeMemory()) >> 10);
+//				}
+//				
+//				prevStatsCheck = time;
+//				framesCount = 0;
+//			}
+//			
+//			int prevColor = graphics.getColor();
+//			int fontH = graphics.getFont().getHeight();
+//			int drawY = 0;
+//			
+//			if (MascotME.showTimeMetrics) {
+//				drawStatsText("Bind: " + bindTime, 0, drawY, graphics);
+//				drawY += fontH;
+//				drawStatsText("Figure: " + figureTime, 0, drawY, graphics);
+//				drawY += fontH;
+//				drawStatsText("PrimCmd: " + primCmdTime, 0, drawY, graphics);
+//				drawY += fontH;
+//				drawStatsText("Flush: " + flushTime, 0, drawY, graphics);
+//				drawY += fontH;
+//				drawStatsText("Release: " + releaseTime, 0, drawY, graphics);
+//				drawY += fontH;
+//			}
+//			
+//			if (MascotME.showHeapUsage) {
+//				drawStatsText("Heap: " + heapUsage + " kb", 0, drawY, graphics);
+//				drawY += fontH;
+//			}
+//			
+//			if (MascotME.showFPS) {
+//				drawStatsText("FPS: " + fps + " / " + frameTime, 0, drawY, graphics);
+//				drawY += fontH;
+//			}
+//			
+//			graphics.setColor(prevColor);
+//		}
 		
 		graphics.setClip(prevClipX, prevClipY, prevClipW, prevClipH);
 		graphics.translate(prevTx, prevTy);
 		
 		boundGraphics = null;
 		
-		releaseAccum += (int) (System.currentTimeMillis() - startTime);
+//		releaseAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 	
-	private final void drawStatsText(String str, int x, int y, Graphics g) {
-		g.setColor(0);
-		g.drawString(str, x + 1, y + 1, 0);
-		g.setColor(0xffffff);
-		g.drawString(str, x, y, 0);
-	}
+//	private final void drawStatsText(String str, int x, int y, Graphics g) {
+//		g.setColor(0);
+//		g.drawString(str, x + 1, y + 1, 0);
+//		g.setColor(0xffffff);
+//		g.drawString(str, x, y, 0);
+//	}
 	
 	private final void quickSort(int low, int high) {
 		if (high - low <= 25) {
@@ -1157,7 +1157,7 @@ public class Graphics3D {
 			throw new NullPointerException();
 		}
 		
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 
 		AffineTrans viewTrans = layout.getAffineTrans();
 		setCenter(layout, x, y);
@@ -1183,7 +1183,7 @@ public class Graphics3D {
 
 		submitFigurePolygons(figure, effect.sphereTexture, useBlending, useLighting, useEnvMap);
 		
-		figureAccum += (int) (System.currentTimeMillis() - startTime);
+//		figureAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 	
 	private final void processFigureVertices(
@@ -1505,7 +1505,7 @@ public class Graphics3D {
 			throw new NullPointerException("Colors array must not be null when face colors are enabled.");
 		}
 		
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 
 		AffineTrans trans = layout.getAffineTrans();
 		setCenter(layout, x, y);
@@ -1542,7 +1542,7 @@ public class Graphics3D {
 				throw new IllegalArgumentException();
 		}
 		
-		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
+//		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 
 	public final void drawCommandList(
@@ -1551,12 +1551,12 @@ public class Graphics3D {
 			int[] commandList
 	) {
 		if (disposed) return;
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		
 		Texture tex = (textures != null && textures.length > 0) ? textures[0] : null;
 		drawCommandList(textures, tex, x, y, layout, effect, commandList);
 		
-		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
+//		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 
 	 public final void drawCommandList(
@@ -1565,9 +1565,9 @@ public class Graphics3D {
 			int[] commandList
 	) {
 		if (disposed) return;
-		long startTime = System.currentTimeMillis();
+//		long startTime = System.currentTimeMillis();
 		drawCommandList(null, texture, x, y, layout, effect, commandList);
-		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
+//		primCmdAccum += (int) (System.currentTimeMillis() - startTime);
 	}
 	
 	private final void drawCommandList(
