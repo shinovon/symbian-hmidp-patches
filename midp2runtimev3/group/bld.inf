@@ -1,0 +1,6 @@
+PRJ_PLATFORMS
+DEFAULT
+
+PRJ_MMPFILES
+midp2runtimev3.mmp
+midp2launcher.mmp
