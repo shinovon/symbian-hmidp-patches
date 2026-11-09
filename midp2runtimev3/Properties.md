@@ -34,7 +34,7 @@ if (s != null && !s.equals("false")) {
 
 ## Java applications
 
-### `cc.nnproject.symbianext.getMidletSuiteVersion:<name>,<vendor>`
+### `cc.nnproject.symbianext.getMidletSuiteVersion:<name>|<vendor>`
 
 Gets version of installed Java application
 
@@ -46,14 +46,14 @@ Returns version in `<major>.<minor>.<build>` format if MIDlet suite is found, nu
 
 Example:
 ```
-if (System.getProperty("cc.nnproject.symbianext.getMidletSuiteVersion:MPGram,nnproject") == null) {
+if (System.getProperty("cc.nnproject.symbianext.getMidletSuiteVersion:MPGram|nnproject") == null) {
     // not installed...
 }
 ```
 
 ---
 
-### `cc.nnproject.symbianext.launchMidlet:<name>,<vendor>[,<num>[,<cmd>]]`
+### `cc.nnproject.symbianext.launchMidlet:<name>|<vendor>[|<num>[|<cmd>]]`
 
 Launches Java application
 
@@ -67,14 +67,14 @@ Returns 0 if operation was successful, otherwise numeric error code
 
 Example:
 ```
-if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram,nnproject,1,-Dasd=dsa -Ddsa=asd"))) {
+if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram|nnproject|1|-Dasd=dsa -Ddsa=asd"))) {
     // ...
 }
 ```
 
 ---
 
-### `cc.nnproject.symbianext.getMidletUid:<name>,<vendor>[,<num>]`
+### `cc.nnproject.symbianext.getMidletUid:<name>|<vendor>[|<num>]`
 
 Gets registered UID of Java application, can be used for isAppRunning, bringAppToForeground
 
@@ -87,7 +87,7 @@ Returns application UID
 
 Example:
 ```
-String mpgramUid = System.getProperty("cc.nnproject.symbianext.getMidletUid:GH2ME,nnproject");
+String mpgramUid = System.getProperty("cc.nnproject.symbianext.getMidletUid:GH2ME|nnproject");
 ```
 
 ---
@@ -154,7 +154,7 @@ if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:0x20012fa6"
 
 ---
 
-### `cc.nnproject.symbianext.bringAppToForeground:<uid>[,<message>,<data>]`
+### `cc.nnproject.symbianext.bringAppToForeground:<uid>[|<message>|<data>]`
 
 Brings application to foreground if it is running, optionally sends a message.
 
@@ -171,10 +171,10 @@ Example:
 ```
 String browserUid = "0x10008d39";
 if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + browserUid))) {
-    if ("true".equals(System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + browserUid + ",0,http://nnproject.cc/"))) {
+    if ("true".equals(System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + browserUid + "|0|http://nnproject.cc/"))) {
         // ...
     }
-} else if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:" + browserUid + ",http://nnproject.cc/"))) {
+} else if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:" + browserUid + "|http://nnproject.cc/"))) {
     // ...
 }
 ```

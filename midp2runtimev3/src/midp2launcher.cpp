@@ -107,7 +107,7 @@ TInt GetIdL(TPtrC aName, TPtrC aVendor) {
 TInt RunL(TPtrC param) {
 	TInt res = 0;
 	
-	TInt commaIdx = param.Locate(',');
+	TInt commaIdx = param.Locate('|');
 		
 	if (commaIdx == -1) return KErrArgument;
 	TPtrC name = param.Left(commaIdx);
@@ -115,12 +115,12 @@ TInt RunL(TPtrC param) {
 	TUint32 midletId = 1;
 	TPtrC cmd(KNullDesC);
 	
-	commaIdx = vendor.Locate(',');
+	commaIdx = vendor.Locate('|');
 	if (commaIdx != -1) {
 		TPtrC midletIdDes = vendor.Mid(commaIdx + 1);
 		vendor.Set(vendor.Left(commaIdx));
 		
-		commaIdx = midletIdDes.Locate(',');
+		commaIdx = midletIdDes.Locate('|');
 		if (commaIdx != -1) {
 			cmd.Set(midletIdDes.Mid(commaIdx + 1));
 			midletIdDes.Set(midletIdDes.Left(commaIdx));

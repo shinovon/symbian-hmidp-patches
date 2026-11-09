@@ -325,13 +325,13 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 	TUint32 uid;
 	TPtrC doc(KNullDesC);
 	{
-		TInt commaIdx = param.Locate(',');
-		if (!ParseInt(commaIdx != -1 ? param.Left(commaIdx) : param, uid)) {
+		TInt splitIdx = param.Locate('|');
+		if (!ParseInt(splitIdx != -1 ? param.Left(splitIdx) : param, uid)) {
 			return NULL;
 		}
 		
-		if (commaIdx != -1) {
-			doc.Set(param.Mid(commaIdx + 1));
+		if (splitIdx != -1) {
+			doc.Set(param.Mid(splitIdx + 1));
 		}
 	}
 
@@ -355,11 +355,11 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetMidletSuiteVersionPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KGetMidletSuiteVersionPrefix.iTypeLength);
-	TInt commaIdx = param.Locate(',');
+	TInt splitIdx = param.Locate('|');
 	
-	if (commaIdx == -1) return NULL;
-	TPtrC name = param.Left(commaIdx);
-	TPtrC vendor = param.Mid(commaIdx + 1);
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC vendor = param.Mid(splitIdx + 1);
 	
 	HBufC* res = NULL;
 	RLibrary lib;
@@ -397,17 +397,17 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetMidletUidPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KGetMidletUidPrefix.iTypeLength);
-	TInt commaIdx = param.Locate(',');
+	TInt splitIdx = param.Locate('|');
 	
-	if (commaIdx == -1) return NULL;
-	TPtrC name = param.Left(commaIdx);
-	TPtrC vendor = param.Mid(commaIdx + 1);
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC vendor = param.Mid(splitIdx + 1);
 	TUint32 midletId = 1;
 	
-	commaIdx = vendor.Locate(',');
-	if (commaIdx != -1) {
-		TPtrC midletIdDes = vendor.Mid(commaIdx + 1);
-		vendor.Set(vendor.Left(commaIdx));
+	splitIdx = vendor.Locate('|');
+	if (splitIdx != -1) {
+		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
+		vendor.Set(vendor.Left(splitIdx));
 		
 		TLex lexer(midletIdDes);
 		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
@@ -478,23 +478,23 @@ static HBufC* LaunchMidletL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KLaunchMidletPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KLaunchMidletPrefix.iTypeLength);
-	TInt commaIdx = param.Locate(',');
+	TInt splitIdx = param.Locate('|');
 	
-	if (commaIdx == -1) return NULL;
-	TPtrC name = param.Left(commaIdx);
-	TPtrC vendor = param.Mid(commaIdx + 1);
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC vendor = param.Mid(splitIdx + 1);
 	TUint32 midletId = 1;
 	TPtrC cmd(KNullDesC);
 	
-	commaIdx = vendor.Locate(',');
-	if (commaIdx != -1) {
-		TPtrC midletIdDes = vendor.Mid(commaIdx + 1);
-		vendor.Set(vendor.Left(commaIdx));
+	splitIdx = vendor.Locate('|');
+	if (splitIdx != -1) {
+		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
+		vendor.Set(vendor.Left(splitIdx));
 		
-		commaIdx = midletIdDes.Locate(',');
-		if (commaIdx != -1) {
-			cmd.Set(midletIdDes.Mid(commaIdx + 1));
-			midletIdDes.Set(midletIdDes.Left(commaIdx));
+		splitIdx = midletIdDes.Locate('|');
+		if (splitIdx != -1) {
+			cmd.Set(midletIdDes.Mid(splitIdx + 1));
+			midletIdDes.Set(midletIdDes.Left(splitIdx));
 		}
 		
 		TLex lexer(midletIdDes);
