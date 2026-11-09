@@ -19,9 +19,11 @@
 #ifdef EKA2
 #define sizeof_Runtime 48
 #define sizeof_Runtime_vtable 64
+#define KJavaRegistryNewLOrdinal 5
 #else
 #define sizeof_Runtime 30
 #define sizeof_Runtime_vtable 64
+#define KJavaRegistryNewLOrdinal 3
 #endif
 
 _LIT(KIsAppInstalledPrefix, "cc.nnproject.symbianext.isAppInstalled:");
@@ -313,27 +315,6 @@ static void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc = KNullDesC) {
 	}
 
 	CleanupStack::PopAndDestroy(); // ls
-////		RWsSession 		ws;
-////		User::LeaveIfError(ws.Connect());
-////		CleanupClosePushL( ws );
-////			
-////		TApaTaskList tasklist(ws);
-////		TApaTask task = tasklist.FindApp(uid);
-////
-////		if (task.Exists()) {
-////			task.BringToForeground();
-////			task.SendMessage(TUid::Uid(0), doc);
-////		} else {
-//		RApaLsSession ls;
-//		User::LeaveIfError(ls.Connect());
-//		CleanupClosePushL(ls);
-//
-//		TThreadId tid;
-//		ls.StartDocument(doc, uid, tid);
-//		
-//		CleanupStack::PopAndDestroy(); // ls
-////		}
-////		CleanupStack::PopAndDestroy(); // ws
 }
 
 static HBufC* LaunchAppL(TDesC* aProperty) {
@@ -387,11 +368,7 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	}
 	CleanupClosePushL(lib);
 	
-#ifdef EKA2
-	void* func = (void*) lib.Lookup(5);
-#else
-	void* func = (void*) lib.Lookup(3);
-#endif
+	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
@@ -443,11 +420,7 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 	}
 	CleanupClosePushL(lib);
 	
-#ifdef EKA2
-	void* func = (void*) lib.Lookup(5);
-#else
-	void* func = (void*) lib.Lookup(3);
-#endif
+	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
@@ -473,11 +446,7 @@ static void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aM
 	User::LeaveIfError(lib.Load(_L("javaregistry.dll")));
 	CleanupClosePushL(lib);
 		
-#ifdef EKA2
-	void* func = (void*) lib.Lookup(5);
-#else
-	void* func = (void*) lib.Lookup(3);
-#endif
+	void* func = (void*) lib.Lookup(KJavaRegistryNewLOrdinal);
 	if (!func) User::Leave(KErrNotSupported);
 	
 	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
