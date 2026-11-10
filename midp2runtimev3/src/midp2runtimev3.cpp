@@ -655,7 +655,7 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 
 EXPORT_C void* GetRuntimeL() {
 	RLibrary lib;
-	User::LeaveIfError(lib.Load(_L("midp2runtimev2.dll")));
+	User::LeaveIfError(lib.Load(_L("z:midp2runtimev2.dll")));
 	unsigned int* runtime = ((unsigned int* (*)()) lib.Lookup(1))();
 	User::LeaveIfNull(runtime);
 	runtime -= 1;

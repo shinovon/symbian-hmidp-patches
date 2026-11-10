@@ -276,6 +276,11 @@ EXPORT_C void CMidiClientUtiliti::SetPriorityL(TInt aPriority, TMdaPriorityPrefe
 	reinterpret_cast<CMidiClientUtility*>(this)->SetPriorityL(aPriority, aPref);
 }
 
+EXPORT_C void CMidiClientUtiliti::GetInstrumentL(TInt aChannel, TInt& aInstrumentId, TInt& aBankId)
+{
+	reinterpret_cast<CMidiClientUtility*>(this)->GetInstrumentL(aChannel, aInstrumentId, aBankId);
+}
+
 EXPORT_C void CMidiClientUtiliti::SetInstrumentL(TInt aChannel, TInt aBankId, TInt aInstrumentId)
 {
 	reinterpret_cast<CMidiClientUtility*>(this)->SetInstrumentL(aChannel, aBankId, aInstrumentId);
@@ -329,6 +334,11 @@ EXPORT_C void CMidiClientUtiliti::SetTempoL(TInt aMicroBeatsPerMinute)
 	reinterpret_cast<CMidiClientUtility*>(this)->SetTempoL(aMicroBeatsPerMinute);
 }
 
+EXPORT_C TInt CMidiClientUtiliti::GetBankIdL(TBool aCustom, TInt aBankIndex) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->GetBankIdL(aCustom, aBankIndex);
+}
+
 EXPORT_C TInt CMidiClientUtiliti::MaxVolumeL() const
 {
 	return reinterpret_cast<const CMidiClientUtility*>(this)->MaxVolumeL();
@@ -349,6 +359,21 @@ EXPORT_C TReal32 CMidiClientUtiliti::ChannelVolumeL(TInt aChannel) const
 	return reinterpret_cast<const CMidiClientUtility*>(this)->ChannelVolumeL(aChannel);
 }
 
+EXPORT_C TInt CMidiClientUtiliti::NumberOfBanksL(TBool aCustom) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->NumberOfBanksL(aCustom);
+}
+
+EXPORT_C HBufC* CMidiClientUtiliti::InstrumentNameL(TInt aBankId, TBool aCustom, TInt aInstrumentId) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->InstrumentNameL(aBankId, aCustom, aInstrumentId);
+}
+
+EXPORT_C TInt CMidiClientUtiliti::GetInstrumentIdL(TInt aBankId, TBool aCustom, TInt aInstrumentIndex) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->GetInstrumentIdL(aBankId, aCustom, aInstrumentIndex);
+}
+
 EXPORT_C TInt CMidiClientUtiliti::MaxPlaybackRateL() const
 {
 	return reinterpret_cast<const CMidiClientUtility*>(this)->MaxPlaybackRateL();
@@ -362,6 +387,16 @@ EXPORT_C TInt CMidiClientUtiliti::MinPlaybackRateL() const
 EXPORT_C CMMFMetaDataEntry* CMidiClientUtiliti::GetMetaDataEntryL(TInt aMetaDataIndex) const
 {
 	return reinterpret_cast<const CMidiClientUtility*>(this)->GetMetaDataEntryL(aMetaDataIndex);
+}
+
+EXPORT_C HBufC* CMidiClientUtiliti::PercussionKeyNameL(TInt aNote, TInt aBankId, TBool aCustom, TInt aInstrumentId) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->PercussionKeyNameL(aNote, aBankId, aCustom, aInstrumentId);
+}
+
+EXPORT_C TInt CMidiClientUtiliti::NumberOfInstrumentsL(TInt aBankId,TBool aCustom) const
+{
+	return reinterpret_cast<const CMidiClientUtility*>(this)->NumberOfInstrumentsL(aBankId, aCustom);
 }
 
 EXPORT_C TTimeIntervalMicroSeconds CMidiClientUtiliti::DurationMicroSecondsL() const
