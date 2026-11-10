@@ -231,7 +231,7 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 	return res;
 }
 
-static TBool DoBringAppToForegroundL(TUid aUid) {
+static TBool DoBringAppToForegroundL(TUid aUid, TBool aSendMessage = EFalse, TUid aMessageId = TUid::Null(), const TDesC8& aDoc = KNullDesC8()) {
 	RWsSession ws;
 	User::LeaveIfError(ws.Connect());
 	CleanupClosePushL(ws);
@@ -243,8 +243,7 @@ static TBool DoBringAppToForegroundL(TUid aUid) {
 	if (task.Exists()) {
 		task.BringToForeground();
 		res = true;
-		// TODO
-//		task.SendMessage(TUid::Uid(0), doc);
+		if (aSendMessage) task.SendMessage(aMessageId, aDoc);
 	}
 
 	CleanupStack::PopAndDestroy(); // ws
@@ -254,6 +253,8 @@ static TBool DoBringAppToForegroundL(TUid aUid) {
 
 static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KBringAppToForegroundPrefix.iTypeLength) return NULL;
+	
+	// TODO
 	
 	TUint32 uid;
 	if (!ParseInt(aProperty->Mid(KBringAppToForegroundPrefix.iTypeLength), uid)) {
@@ -301,14 +302,14 @@ static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KBringMidletToForegroundPrefix.iTypeLength) return NULL;
 
 	TPtrC param = aProperty->Mid(KGetMidletUidPrefix.iTypeLength);
-	TInt splitIdx = param.Locate('|');
+	TInt splitIdx = param.Locate(';');
 	
 	if (splitIdx == -1) return NULL;
 	TPtrC name = param.Left(splitIdx);
 	TPtrC vendor = param.Mid(splitIdx + 1);
 	TUint32 midletId = 1;
 	
-	splitIdx = vendor.Locate('|');
+	splitIdx = vendor.Locate(';');
 	if (splitIdx != -1) {
 		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
 		vendor.Set(vendor.Left(splitIdx));
@@ -392,7 +393,7 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 	TUint32 uid;
 	TPtrC doc(KNullDesC);
 	{
-		TInt splitIdx = param.Locate('|');
+		TInt splitIdx = param.Locate(';');
 		if (!ParseInt(splitIdx != -1 ? param.Left(splitIdx) : param, uid)) {
 			return NULL;
 		}
@@ -422,7 +423,7 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetMidletSuiteVersionPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KGetMidletSuiteVersionPrefix.iTypeLength);
-	TInt splitIdx = param.Locate('|');
+	TInt splitIdx = param.Locate(';');
 	
 	if (splitIdx == -1) return NULL;
 	TPtrC name = param.Left(splitIdx);
@@ -464,14 +465,14 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetMidletUidPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KGetMidletUidPrefix.iTypeLength);
-	TInt splitIdx = param.Locate('|');
+	TInt splitIdx = param.Locate(';');
 	
 	if (splitIdx == -1) return NULL;
 	TPtrC name = param.Left(splitIdx);
 	TPtrC vendor = param.Mid(splitIdx + 1);
 	TUint32 midletId = 1;
 	
-	splitIdx = vendor.Locate('|');
+	splitIdx = vendor.Locate(';');
 	if (splitIdx != -1) {
 		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
 		vendor.Set(vendor.Left(splitIdx));
@@ -548,7 +549,7 @@ static HBufC* LaunchMidletL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KLaunchMidletPrefix.iTypeLength) return NULL;
 	
 	TPtrC param = aProperty->Mid(KLaunchMidletPrefix.iTypeLength);
-	TInt splitIdx = param.Locate('|');
+	TInt splitIdx = param.Locate(';');
 	
 	if (splitIdx == -1) return NULL;
 	TPtrC name = param.Left(splitIdx);
@@ -556,12 +557,12 @@ static HBufC* LaunchMidletL(TDesC* aProperty) {
 	TUint32 midletId = 1;
 	TPtrC cmd(KNullDesC);
 	
-	splitIdx = vendor.Locate('|');
+	splitIdx = vendor.Locate(';');
 	if (splitIdx != -1) {
 		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
 		vendor.Set(vendor.Left(splitIdx));
 		
-		splitIdx = midletIdDes.Locate('|');
+		splitIdx = midletIdDes.Locate(';');
 		if (splitIdx != -1) {
 			cmd.Set(midletIdDes.Mid(splitIdx + 1));
 			midletIdDes.Set(midletIdDes.Left(splitIdx));
