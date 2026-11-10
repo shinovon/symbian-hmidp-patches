@@ -63,7 +63,7 @@ Parameters:
 - num: MIDlet number starting from 1, defaults to 1 if not specified
 - cmd: Command line arguments, optional
 
-Returns 0 if operation was successful, otherwise numeric error code
+Returns 0 if operation was successful, -11 if midlet is already running, or any other error code
 
 Example:
 ```
@@ -74,9 +74,31 @@ if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram|n
 
 ---
 
+### `cc.nnproject.symbianext.bringMidletToForeground:<name>|<vendor>[|<num>]`
+
+Brings Java application to foreground if it is running
+
+Parameters:
+- name: MIDlet suite name
+- vendor: MIDlet suite vendor
+- num: MIDlet number starting from 1, defaults to 1 if not specified
+
+Returns 0 if operation was successful
+
+Example:
+```
+if (!"0".equals(System.getProperty("cc.nnproject.symbianext.bringMidletToForeground:MPGram|nnproject"))) {
+    if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram|nnproject"))) {
+        // ...
+    }
+}
+```
+
+---
+
 ### `cc.nnproject.symbianext.getMidletUid:<name>|<vendor>[|<num>]`
 
-Gets registered UID of Java application, can be used for isAppRunning, bringAppToForeground
+Gets registered UID of Java application, can be used for isAppRunning
 
 Parameters:
 - name: MIDlet suite name
@@ -87,7 +109,10 @@ Returns application UID
 
 Example:
 ```
-String mpgramUid = System.getProperty("cc.nnproject.symbianext.getMidletUid:GH2ME|nnproject");
+String gh2meUid = System.getProperty("cc.nnproject.symbianext.getMidletUid:GH2ME|nnproject");
+if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + gh2meUid))) {
+    // ...
+}
 ```
 
 ---

@@ -34,6 +34,7 @@ _LIT(KLaunchMidletPrefix, "cc.nnproject.symbianext.launchMidlet:");
 _LIT(KGetMidletSuiteVersionPrefix, "cc.nnproject.symbianext.getMidletSuiteVersion:");
 _LIT(KIsAppRunningPrefix, "cc.nnproject.symbianext.isAppRunning:");
 _LIT(KBringAppToForegroundPrefix, "cc.nnproject.symbianext.bringAppToForeground:");
+_LIT(KBringMidletToForegroundPrefix, "cc.nnproject.symbianext.bringMidletToForeground:");
 _LIT(KTrue, "true");
 _LIT(KFalse, "false");
 _LIT(KApiVersion, "1.0");
@@ -195,6 +196,20 @@ static HBufC* IsAppInstalledL(TDesC* aProperty) {
 	return res;
 }
 
+static TBool DoIsAppRunningL(TUid aUid) {
+	RWsSession ws;
+	User::LeaveIfError(ws.Connect());
+	CleanupClosePushL(ws);
+		
+	TApaTaskList tasklist(ws);
+	TApaTask task = tasklist.FindApp(aUid);
+	TBool res = task.Exists();
+
+	CleanupStack::PopAndDestroy(); // ws
+	
+	return res;
+}
+
 static HBufC* IsAppRunningL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KIsAppRunningPrefix.iTypeLength) return NULL;
 	
@@ -202,16 +217,9 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 	if (!ParseInt(aProperty->Mid(KIsAppRunningPrefix.iTypeLength), uid)) {
 		return NULL;
 	}
-	
-	RWsSession ws;
-	User::LeaveIfError(ws.Connect());
-	CleanupClosePushL(ws);
-		
-	TApaTaskList tasklist(ws);
-	TApaTask task = tasklist.FindApp(TUid::Uid(uid));
 
 	HBufC* res = NULL;
-	if (task.Exists()) {
+	if (DoIsAppRunningL(TUid::Uid(uid))) {
 		res = HBufC16::NewLC(4);
 		res->Des().Append(KTrue);
 		CleanupStack::Pop();
@@ -220,8 +228,27 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 		res->Des().Append(KFalse);
 		CleanupStack::Pop();
 	}
+	return res;
+}
+
+static TBool DoBringAppToForegroundL(TUid aUid) {
+	RWsSession ws;
+	User::LeaveIfError(ws.Connect());
+	CleanupClosePushL(ws);
+		
+	TApaTaskList tasklist(ws);
+	TApaTask task = tasklist.FindApp(aUid);
+
+	TBool res = false;
+	if (task.Exists()) {
+		task.BringToForeground();
+		res = true;
+		// TODO
+//		task.SendMessage(TUid::Uid(0), doc);
+	}
 
 	CleanupStack::PopAndDestroy(); // ws
+	
 	return res;
 }
 
@@ -233,19 +260,8 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 		return NULL;
 	}
 	
-	RWsSession ws;
-	User::LeaveIfError(ws.Connect());
-	CleanupClosePushL(ws);
-		
-	TApaTaskList tasklist(ws);
-	TApaTask task = tasklist.FindApp(TUid::Uid(uid));
-
 	HBufC* res = NULL;
-	if (task.Exists()) {
-		task.BringToForeground();
-		// TODO
-//		task.SendMessage(TUid::Uid(0), doc);
-		
+	if (DoBringAppToForegroundL(TUid::Uid(uid))) {
 		res = HBufC16::NewLC(4);
 		res->Des().Append(_L("true"));
 		CleanupStack::Pop();
@@ -254,8 +270,59 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 		res->Des().Append(_L("false")); // not found
 		CleanupStack::Pop();
 	}
+	return res;
+}
 
-	CleanupStack::PopAndDestroy(); // ws
+static void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
+	RLibrary lib;
+	User::LeaveIfError(lib.Load(_L("javaregistry.dll")));
+	CleanupClosePushL(lib);
+	
+	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
+	if (!func) User::Leave(KErrNotSupported);
+	
+	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
+	User::LeaveIfNull(registry);
+	CleanupReleasePushL(*registry);
+
+	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(aName, aVendor);
+	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
+	TUid uid = midlet->UidL();
+
+	TBool res = DoBringAppToForegroundL(uid);
+	
+	CleanupStack::PopAndDestroy(); // registry
+	CleanupStack::PopAndDestroy(); // lib
+	
+	if (!res) User::Leave(KErrNotFound);
+}
+
+static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KBringMidletToForegroundPrefix.iTypeLength) return NULL;
+
+	TPtrC param = aProperty->Mid(KGetMidletUidPrefix.iTypeLength);
+	TInt splitIdx = param.Locate('|');
+	
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC vendor = param.Mid(splitIdx + 1);
+	TUint32 midletId = 1;
+	
+	splitIdx = vendor.Locate('|');
+	if (splitIdx != -1) {
+		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
+		vendor.Set(vendor.Left(splitIdx));
+		
+		TLex lexer(midletIdDes);
+		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
+	}
+	
+	// TODO
+	TRAPD(err, DoBringMidletToForegroundL(name, vendor, midletId));
+	HBufC* res = HBufC16::NewLC(16);
+	res->Des().AppendNum((TInt)err);
+	CleanupStack::Pop();
+	
 	return res;
 }
 
@@ -455,7 +522,10 @@ static void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aM
 	
 	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(aName, aVendor);
 	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
-	TUid uid = midlet->UidL();
+	
+	if (DoIsAppRunningL(midlet->UidL())) {
+		User::Leave(KErrAlreadyExists);
+	}
 	
 	RProcess process;
 	CleanupClosePushL(process);
@@ -564,6 +634,10 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	}
 	if (aProperty->Find(KBringAppToForegroundPrefix) == 0) {
 		TRAP_IGNORE(res = BringAppToForegroundL(aProperty));
+		return res;
+	}
+	if (aProperty->Find(KBringMidletToForegroundPrefix) == 0) {
+		TRAP_IGNORE(res = BringMidletToForegroundL(aProperty));
 		return res;
 	}
 #ifdef EKA2
