@@ -21,6 +21,6 @@ patch in hex:
 1F4723: 31 -> 32
 
 
-not tested
+works on n73me, n91
 
 by shinovon, worked on this on 09.11.2026
