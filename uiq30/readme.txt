@@ -22,4 +22,6 @@ patch in hex:
 
 take midp2runtimev3.dll from midp2runtimev3dll
 
+works on p1i
+
 by shinovon, worked on this on 31.10.2026

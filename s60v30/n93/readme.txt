@@ -17,6 +17,7 @@ patch in hex:
 9C2A9-9C2BB: 43 61 63 68 65 4A 61 72 46 69 6C 65 48 61 6E 64 6C 65 73 -> 55 73 65 56 65 72 69 66 69 65 72 00 00 00 00 00 00 00 00
 1D073A: 32 -> 33
 
+
 not tested
 
 by shinovon, worked on this on 09.11.2026

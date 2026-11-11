@@ -20,6 +20,7 @@ A1E19-A1E2B: 43 61 63 68 65 4A 61 72 46 69 6C 65 48 61 6E 64 6C 65 73 -> 55 73 6
 20105D: 74 -> 32
 201069: 31 -> 32
 
-not tested
+
+works on e61i
 
 by shinovon, worked on this on 09.11.2026, 11.11.2026

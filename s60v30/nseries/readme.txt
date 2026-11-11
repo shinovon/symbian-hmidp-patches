@@ -20,6 +20,7 @@ patch in hex:
 1F4717: 74 -> 32
 1F4723: 31 -> 32
 
+
 not tested
 
 by shinovon, worked on this on 09.11.2026
