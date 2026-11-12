@@ -1,12 +1,12 @@
-package com.symbian.midp.runtime.properties;
+package cc.nnproject.symbianext;
 
-import com.symbian.midp.runtime.PropertySet;
+import com.nokia.mj.impl.vmport.VmPort;
 
-public class PropertySet_cc implements PropertySet {
+public class PropertyExtensions {
 
 	static final String VERSION = "1.0";
 	
-	public String getProperty(String property) {
+	public static String getProperty(String property) {
 		try {
 			if ("cc.nnproject.symbianext.version".equals(property)) {
 				return VERSION;
@@ -177,5 +177,13 @@ public class PropertySet_cc implements PropertySet {
 	private static native int _bringMidletToForeground(String name, String vendor, int num);
 	
 	private static native int _getInstalledSisVersion(int uid, int[] out);
+	
+	static {
+		try {
+			VmPort.getInstance().System_loadLibrary("nnapi93");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }
