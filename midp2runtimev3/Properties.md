@@ -183,7 +183,7 @@ if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:0x20012fa6"
 
 Brings application to foreground if it is running, optionally sends a message.
 
-FUTURE
+Sending message is not yet supported!
 
 Parameters:
 - uid: Application UID (decimal, or hexadecimal with 0x)
