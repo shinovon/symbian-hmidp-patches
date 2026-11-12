@@ -4,22 +4,25 @@
 JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1checkTLS12
 	(JNIEnv *, jclass)
 {
-	// TODO
-	return 0;
+	TInt res = 0;
+	TRAP(res, res = DoCheckMbedTlsL());
+	return res;
 }
 
 JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1isAppInstalled
-	(JNIEnv *, jclass, jint)
+	(JNIEnv *, jclass, jint aUid)
 {
-	// TODO
-	return 0;
+	TInt res = 0;
+	TRAP(res, res = DoIsAppInstalledL(TUid::Uid(aUid)));
+	return res;
 }
 
 JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1isAppRunning
-	(JNIEnv *, jclass, jint)
+	(JNIEnv *, jclass, jint aUid)
 {
-	// TODO
-	return 0;
+	TInt res = 0;
+	TRAP(res, res = DoIsAppRunningL(TUid::Uid(aUid)));
+	return res;
 }
 
 JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1launchApp
