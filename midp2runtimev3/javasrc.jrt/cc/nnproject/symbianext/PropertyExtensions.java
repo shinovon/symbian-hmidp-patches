@@ -21,51 +21,23 @@ public class PropertyExtensions {
 				String[] params = parseParams(property, 1, 1);
 				if (params == null) return null;
 				
-				int uid;
-				if (params[0].startsWith("0x")) {
-					uid = Integer.parseInt(params[0].substring(2), 16);
-				} else {
-					uid = Integer.parseInt(params[0]);
-				}
-				
-				return _isAppInstalled(uid) == 1 ? "true" : "false";
+				return _isAppInstalled(getIntUid(params[0])) == 1 ? "true" : "false";
 			}
 			if (property.startsWith("cc.nnproject.symbianext.isAppRunning:")) {
 				String[] params = parseParams(property, 1, 1);
 				if (params == null) return null;
-				
-				int uid;
-				if (params[0].startsWith("0x")) {
-					uid = Integer.parseInt(params[0].substring(2), 16);
-				} else {
-					uid = Integer.parseInt(params[0]);
-				}
 
-				return _isAppRunning(uid) == 1 ? "true" : "false";
+				return _isAppRunning(getIntUid(params[0])) == 1 ? "true" : "false";
 			}
 			if (property.startsWith("cc.nnproject.symbianext.launchApp:")) {
 				String[] params = parseParams(property, 2, 1);
 				if (params == null) return null;
 				
-				int uid;
-				if (params[0].startsWith("0x")) {
-					uid = Integer.parseInt(params[0].substring(2), 16);
-				} else {
-					uid = Integer.parseInt(params[0]);
-				}
-				
-				return Integer.toString(_launchApp(uid, params[1]));
+				return Integer.toString(_launchApp(getIntUid(params[0]), params[1]));
 			}
 			if (property.startsWith("cc.nnproject.symbianext.bringAppToForeground:")) {
 				String[] params = parseParams(property, 3, 1);
 				if (params == null) return null;
-				
-				int uid;
-				if (params[0].startsWith("0x")) {
-					uid = Integer.parseInt(params[0].substring(2), 16);
-				} else {
-					uid = Integer.parseInt(params[0]);
-				}
 
 				boolean sendMessage = false;
 				int message = 0;
@@ -74,7 +46,7 @@ public class PropertyExtensions {
 					sendMessage = true;
 				}
 
-				return Integer.toString(_bringAppToForeground(uid, sendMessage, message, params[2]));
+				return Integer.toString(_bringAppToForeground(getIntUid(params[0]), sendMessage, message, params[2]));
 			}
 			if (property.startsWith("cc.nnproject.symbianext.getMidletUid:")) {
 				String[] params = parseParams(property, 3, 2);
@@ -89,7 +61,7 @@ public class PropertyExtensions {
 				int r = _getMidletUid(params[0], params[1], midletNum);
 				if (r == 0) return null;
 				
-				return "0x".concat(Integer.toHexString(r));
+				return "0x".concat(Integer.toString(r, 16));
 			}
 			if (property.startsWith("cc.nnproject.symbianext.getMidletSuiteVersion:")) {
 				String[] params = parseParams(property, 2, 2);
@@ -135,21 +107,17 @@ public class PropertyExtensions {
 			if (property.startsWith("cc.nnproject.symbianext.getInstalledSisVersion:")) {
 				String[] params = parseParams(property, 1, 1);
 				if (params == null) return null;
-				
-				int uid;
-				if (params[0].startsWith("0x")) {
-					uid = Integer.parseInt(params[0].substring(2), 16);
-				} else {
-					uid = Integer.parseInt(params[0]);
-				}
 
 				int[] ver = new int[3];
-				int r = _getInstalledSisVersion(uid, ver);
+				int r = _getInstalledSisVersion(getIntUid(params[0]), ver);
 				if (r != 0) return null;
 				
 				return ver[0] + "." + ver[1] + "." + ver[2];
 			}
-		} catch (Throwable ignored) {}
+		} catch (Throwable ignored) {
+			ignored.printStackTrace();
+			return ignored.toString();
+		}
 		return null;
 	}
 	
@@ -172,6 +140,13 @@ public class PropertyExtensions {
 		if (num < required) return null;
 		
 		return res;
+	}
+	
+	private static int getIntUid(String uid) {
+		if (uid.startsWith("0x")) {
+			return (int) Long.parseLong(uid.substring(2), 16);
+		}
+		return Integer.parseInt(uid);
 	}
 	
 	private static native int _checkTLS12();
