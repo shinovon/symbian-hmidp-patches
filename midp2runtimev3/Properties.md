@@ -2,7 +2,7 @@
 
 ### `cc.nnproject.symbianext.version`
 
-Returns version of midp2runtimev2.dll extension
+Returns version of the extension
 
 Example:
 ```
@@ -10,6 +10,12 @@ if (System.getProperty("cc.nnproject.symbianext.version") != null) {
     // patch installed
 }
 ```
+
+---
+
+### `cc.nnproject.symbianext.variant`
+
+Returns installed patch variant, can be `hmidp_eka2`, `hmidp_eka1`, or `jrt1`
 
 ---
 
