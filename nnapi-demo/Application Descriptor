@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+MIDlet-Vendor: nnproject
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Name: nnapi demo
+MIDlet-1: Test,,N
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Jar-URL: nnapi-demo.jar
