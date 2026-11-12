@@ -18,6 +18,7 @@ USERINCLUDE ..\inc
 
 SOURCEPATH ..\src
 SOURCE midp2runtimev3.cpp
+SOURCE common.cpp
 
 nostrictdef
 

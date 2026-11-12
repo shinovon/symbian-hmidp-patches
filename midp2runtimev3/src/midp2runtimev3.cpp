@@ -3,27 +3,14 @@
 #include <hal_data.h>
 #include <etel3rdparty.h>
 #include <bautils.h>
-#include <apgcli.h>
-#include <apacmdln.h>
-#include <apgicnfl.h>
-#include <apgtask.h>
-#include <barsc.h>
-#include <w32std.h>
-#include "mjavaregistry.h"
-#include "appversion.h"
-#ifdef EKA2
-#include <swi/sisregistrysession.h>
-#include <swi/sisregistryentry.h>
-#endif
+#include "common.h"
 
 #ifdef EKA2
 #define sizeof_Runtime 48
 #define sizeof_Runtime_vtable 64
-#define MJavaRegistry_CreateL 5
 #else
 #define sizeof_Runtime 30
 #define sizeof_Runtime_vtable 64
-#define MJavaRegistry_CreateL 3
 #endif
 
 _LIT(KIsAppInstalledPrefix, "cc.nnproject.symbianext.isAppInstalled:");
@@ -121,29 +108,8 @@ static HBufC* GetBatteryLevelL() {
 static HBufC* CheckTlsL() {
 	HBufC* res = NULL;
 #ifdef EKA2
-	Swi::RSisRegistrySession session;
-	if (session.Connect() == KErrNone) {
-		CleanupClosePushL(session);
-		
-		Swi::RSisRegistryEntry entry;
-		CleanupClosePushL(entry);
-		if (entry.Open(session, TUid::Uid(0x20292B6B)) == KErrNone) {
-			res = HBufC16::NewLC(7);
-			res->Des().Append(_L("mbedtls"));
-			CleanupStack::Pop();
-		}
-
-		CleanupStack::PopAndDestroy(); // entry
-		CleanupStack::PopAndDestroy(); // session
-		return res;
-	}
-	
-	// may be installed manually
-	RLibrary lib;
-	if (lib.Load(_L("mbedtls.dll")) == KErrNone) {
+	if (DoCheckMbedTlsL()) {
 		res = _L("mbedtls").AllocL();
-		
-		lib.Close();
 	} else {
 		res = HBufC16::NewLC(5);
 		res->Des().Append(KFalse);
@@ -176,13 +142,8 @@ static HBufC* IsAppInstalledL(TDesC* aProperty) {
 		return NULL;
 	}
 	
-	RApaLsSession ls;
-	User::LeaveIfError(ls.Connect());
-	CleanupClosePushL(ls);
-	
-	TApaAppInfo appInfo;
 	HBufC* res = NULL;
-	if (ls.GetAppInfo(appInfo, TUid::Uid(uid)) == KErrNone) {
+	if (DoIsAppInstalledL(TUid::Uid(uid))) {
 		res = HBufC16::NewLC(4);
 		res->Des().Append(KTrue);
 		CleanupStack::Pop();
@@ -191,22 +152,6 @@ static HBufC* IsAppInstalledL(TDesC* aProperty) {
 		res->Des().Append(KFalse);
 		CleanupStack::Pop();
 	}
-
-	CleanupStack::PopAndDestroy(); // ls
-	return res;
-}
-
-static TBool DoIsAppRunningL(TUid aUid) {
-	RWsSession ws;
-	User::LeaveIfError(ws.Connect());
-	CleanupClosePushL(ws);
-		
-	TApaTaskList tasklist(ws);
-	TApaTask task = tasklist.FindApp(aUid);
-	TBool res = task.Exists();
-
-	CleanupStack::PopAndDestroy(); // ws
-	
 	return res;
 }
 
@@ -231,26 +176,6 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 	return res;
 }
 
-static TBool DoBringAppToForegroundL(TUid aUid, TBool aSendMessage = EFalse, TUid aMessageId = TUid::Null(), const TDesC8& aDoc = KNullDesC8()) {
-	RWsSession ws;
-	User::LeaveIfError(ws.Connect());
-	CleanupClosePushL(ws);
-		
-	TApaTaskList tasklist(ws);
-	TApaTask task = tasklist.FindApp(aUid);
-
-	TBool res = false;
-	if (task.Exists()) {
-		task.BringToForeground();
-		res = true;
-		if (aSendMessage) task.SendMessage(aMessageId, aDoc);
-	}
-
-	CleanupStack::PopAndDestroy(); // ws
-	
-	return res;
-}
-
 static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KBringAppToForegroundPrefix.iTypeLength) return NULL;
 	
@@ -272,30 +197,6 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 		CleanupStack::Pop();
 	}
 	return res;
-}
-
-static void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
-	RLibrary lib;
-	User::LeaveIfError(lib.Load(_L("javaregistry.dll")));
-	CleanupClosePushL(lib);
-	
-	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
-	if (!func) User::Leave(KErrNotSupported);
-	
-	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
-	User::LeaveIfNull(registry);
-	CleanupReleasePushL(*registry);
-
-	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(aName, aVendor);
-	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
-	TUid uid = midlet->UidL();
-
-	TBool res = DoBringAppToForegroundL(uid);
-	
-	CleanupStack::PopAndDestroy(); // registry
-	CleanupStack::PopAndDestroy(); // lib
-	
-	if (!res) User::Leave(KErrNotFound);
 }
 
 static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
@@ -336,16 +237,7 @@ static HBufC* GetInstalledSisVersionL(TDesC* aProperty) {
 		return NULL;
 	}
 	
-	Swi::RSisRegistrySession session;
-	CleanupClosePushL(session);
-	User::LeaveIfError(session.Connect());
-	
-	Swi::RSisRegistryEntry entry;
-	CleanupClosePushL(entry);
-	User::LeaveIfError(entry.Open(session, TUid::Uid(uid)));
-	
-	TVersion version = entry.VersionL();
-	
+	TVersion version = DoGetInstalledSisVersionL(TUid::Uid(uid));
 	HBufC* res = res = HBufC::NewLC(16);
 	TPtr16 des = res->Des();
 	des.AppendNum((TInt)version.iMajor);
@@ -354,36 +246,10 @@ static HBufC* GetInstalledSisVersionL(TDesC* aProperty) {
 	des.Append('.');
 	des.AppendNum((TInt)version.iBuild);
 	CleanupStack::Pop();
-
-	CleanupStack::PopAndDestroy(); // entry
-	CleanupStack::PopAndDestroy(); // session
+	
 	return res;
 }
 #endif
-
-static void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc = KNullDesC) {
-	RApaLsSession ls;
-	User::LeaveIfError(ls.Connect());
-	CleanupClosePushL(ls);
-	
-	TApaAppInfo appInfo;
-	User::LeaveIfError(ls.GetAppInfo(appInfo, aUid));
-	
-	if (aDoc.Length() != 0) {
-		TThreadId tid;
-		User::LeaveIfError(ls.StartDocument(aDoc, aUid, tid));
-	} else {
-		CApaCommandLine* cli = CApaCommandLine::NewLC();
-		cli->SetExecutableNameL(appInfo.iFullName);
-//		if (doc.Length() != 0) {
-//			cli->SetDocumentNameL(doc);
-//		}
-		User::LeaveIfError(ls.StartApp(*cli));
-		CleanupStack::PopAndDestroy(); // cli
-	}
-
-	CleanupStack::PopAndDestroy(); // ls
-}
 
 static HBufC* LaunchAppL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KLaunchAppPrefix.iTypeLength) return NULL;
@@ -404,7 +270,6 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 	}
 
 	TRAPD(err, DoLaunchAppUidL(TUid::Uid(uid), doc));
-	
 	HBufC* res = res = HBufC16::NewLC(16);
 	res->Des().AppendNum((TInt)err);
 	CleanupStack::Pop();
@@ -441,24 +306,8 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	TPtrC name = param.Left(splitIdx);
 	TPtrC vendor = param.Mid(splitIdx + 1);
 	
-	HBufC* res = NULL;
-	RLibrary lib;
-	if (lib.Load(_L("javaregistry.dll")) != KErrNone) {
-		return NULL;
-	}
-	CleanupClosePushL(lib);
-	
-	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
-	if (!func) User::Leave(KErrNotSupported);
-	
-	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
-	User::LeaveIfNull(registry);
-	CleanupReleasePushL(*registry);
-	
-	MJavaRegistrySuiteEntry* entry = registry->SuiteEntryL(name, vendor);
-	
-	TAppVersion version = entry->VersionL();
-	res = HBufC16::NewLC(16);
+	TAppVersion version = DoGetMidletSuiteVersionL(name, vendor);
+	HBufC* res = HBufC16::NewLC(16);
 	TPtr16 des = res->Des();
 	des.AppendNum((TInt)version.iMajor);
 	des.Append('.');
@@ -466,9 +315,6 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	des.Append('.');
 	des.AppendNum((TInt)version.iBuild);
 	CleanupStack::Pop();
-	
-	CleanupStack::PopAndDestroy(); // registry
-	CleanupStack::PopAndDestroy(); // lib
 	
 	return res;
 }
@@ -493,68 +339,11 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
 	}
 	
-	HBufC* res = NULL;
-	RLibrary lib;
-	if (lib.Load(_L("javaregistry.dll")) != KErrNone) {
-		return NULL;
-	}
-	CleanupClosePushL(lib);
-	
-	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
-	if (!func) User::Leave(KErrNotSupported);
-	
-	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
-	User::LeaveIfNull(registry);
-	CleanupReleasePushL(*registry);
-
-	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(name, vendor);
-	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(midletId);
-	TUid uid = midlet->UidL();
-
-	res = HBufC16::NewLC(16);
-	res->Des().AppendFormat(_L("0x%x"), midlet->UidL().iUid);
+	TInt32 uid = DoGetMidletUidL(name, vendor, midletId);
+	HBufC* res = HBufC16::NewLC(16);
+	res->Des().AppendFormat(_L("0x%x"), uid);
 	CleanupStack::Pop();
-	
-	CleanupStack::PopAndDestroy(); // registry
-	CleanupStack::PopAndDestroy(); // lib
-	
 	return res;
-}
-
-static void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
-	RLibrary lib;
-	User::LeaveIfError(lib.Load(_L("javaregistry.dll")));
-	CleanupClosePushL(lib);
-		
-	void* func = (void*) lib.Lookup(MJavaRegistry_CreateL);
-	if (!func) User::Leave(KErrNotSupported);
-	
-	MJavaRegistry* registry = ((MJavaRegistry* (*)(void))func)();
-	User::LeaveIfNull(registry);
-	CleanupReleasePushL(*registry);
-	
-	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(aName, aVendor);
-	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
-	
-	if (DoIsAppRunningL(midlet->UidL())) {
-		User::Leave(KErrAlreadyExists);
-	}
-	
-	RProcess process;
-	CleanupClosePushL(process);
-	User::LeaveIfError(process.Create(_L("midp2launcher.exe"), aParam));
-	
-	TRequestStatus status;
-	process.Logon(status);
-	process.Resume();
-	User::WaitForRequest(status);
-	
-	TInt reason = process.ExitReason();
-	if (reason != 0) User::Leave(reason);
-
-	CleanupStack::PopAndDestroy(); // process
-	CleanupStack::PopAndDestroy(); // registry
-	CleanupStack::PopAndDestroy(); // lib
 }
 
 static HBufC* LaunchMidletL(TDesC* aProperty) {
@@ -629,8 +418,16 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 		TRAP_IGNORE(res = IsAppInstalledL(aProperty));
 		return res;
 	}
+	if (aProperty->Find(KIsAppRunningPrefix) == 0) {
+		TRAP_IGNORE(res = IsAppRunningL(aProperty));
+		return res;
+	}
 	if (aProperty->Find(KLaunchAppPrefix) == 0) {
 		TRAP_IGNORE(res = LaunchAppL(aProperty));
+		return res;
+	}
+	if (aProperty->Find(KBringAppToForegroundPrefix) == 0) {
+		TRAP_IGNORE(res = BringAppToForegroundL(aProperty));
 		return res;
 	}
 	if (aProperty->Find(KGetMidletUidPrefix) == 0) {
@@ -643,14 +440,6 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	}
 	if (aProperty->Find(KLaunchMidletPrefix) == 0) {
 		TRAP_IGNORE(res = LaunchMidletL(aProperty));
-		return res;
-	}
-	if (aProperty->Find(KIsAppRunningPrefix) == 0) {
-		TRAP_IGNORE(res = IsAppRunningL(aProperty));
-		return res;
-	}
-	if (aProperty->Find(KBringAppToForegroundPrefix) == 0) {
-		TRAP_IGNORE(res = BringAppToForegroundL(aProperty));
 		return res;
 	}
 	if (aProperty->Find(KBringMidletToForegroundPrefix) == 0) {
