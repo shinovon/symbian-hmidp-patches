@@ -419,6 +419,18 @@ static HBufC* GetVersionL() {
 	return res;
 }
 
+static HBufC* GetVariantL() {
+	HBufC* res = HBufC16::NewLC(10);
+	// jrt1 on j9
+#ifdef EKA2
+	res->Des().Append(_L("hmidp_eka2"));
+#else
+	res->Des().Append(_L("hmidp_eka1"));
+#endif
+	CleanupStack::Pop();
+	return res;
+}
+
 static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetMidletSuiteVersionPrefix.iTypeLength) return NULL;
 	
@@ -603,6 +615,10 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	}
 	if (!aProperty->Compare(_L("cc.nnproject.symbianext.version"))) {
 		TRAP_IGNORE(res = GetVersionL());
+		return res;
+	}
+	if (!aProperty->Compare(_L("cc.nnproject.symbianext.variant"))) {
+		TRAP_IGNORE(res = GetVariantL());
 		return res;
 	}
 	if (!aProperty->Compare(_L("cc.nnproject.symbianext.checkTLS12"))) {
