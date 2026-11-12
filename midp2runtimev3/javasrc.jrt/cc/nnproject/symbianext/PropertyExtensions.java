@@ -79,6 +79,7 @@ public class PropertyExtensions {
 			if (property.startsWith("cc.nnproject.symbianext.getMidletUid:")) {
 				String[] params = parseParams(property, 3, 2);
 				if (params == null) return null;
+				if (params[0] == null || params[1] == null) return null;
 				
 				int midletNum = 1;
 				if (params[2] != null) {
@@ -93,6 +94,7 @@ public class PropertyExtensions {
 			if (property.startsWith("cc.nnproject.symbianext.getMidletSuiteVersion:")) {
 				String[] params = parseParams(property, 2, 2);
 				if (params == null) return null;
+				if (params[0] == null || params[1] == null) return null;
 
 				int[] ver = new int[3];
 				int r = _getMidletSuiteVersion(params[0], params[1], ver);
@@ -103,17 +105,25 @@ public class PropertyExtensions {
 			if (property.startsWith("cc.nnproject.symbianext.launchMidlet:")) {
 				String[] params = parseParams(property, 4, 2);
 				if (params == null) return null;
+				if (params[0] == null || params[1] == null) return null;
 				
 				int midletNum = 1;
 				if (params[2] != null) {
 					midletNum = Integer.parseInt(params[2]);
 				}
 				
-				return Integer.toString(_launchMidlet(params[0], params[1], midletNum, params[3]));
+				StringBuffer cmd = new StringBuffer();
+				cmd.append(params[0]).append(';').append(params[1]).append(';').append(midletNum);
+				if (params[3] != null) {
+					cmd.append(';').append(params[3]);
+				}
+				
+				return Integer.toString(_launchMidlet(params[0], params[1], midletNum, cmd.toString()));
 			}
 			if (property.startsWith("cc.nnproject.symbianext.bringMidletToForeground:")) {
 				String[] params = parseParams(property, 3, 2);
 				if (params == null) return null;
+				if (params[0] == null || params[1] == null) return null;
 
 				int midletNum = 1;
 				if (params[2] != null) {
