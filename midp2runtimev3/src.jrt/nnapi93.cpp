@@ -1,7 +1,7 @@
-#include "com_symbian_midp_runtime_properties_PropertySet_cc.h"
+#include "cc_nnproject_symbianext_PropertyExtensions.h"
 #include "common.h"
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1checkTLS12
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1checkTLS12
 	(JNIEnv *, jclass)
 {
 	TInt res = 0;
@@ -9,7 +9,7 @@ JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc_
 	return res;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1isAppInstalled
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppInstalled
 	(JNIEnv *, jclass, jint aUid)
 {
 	TInt res = 0;
@@ -17,7 +17,7 @@ JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc_
 	return res;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1isAppRunning
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRunning
 	(JNIEnv *, jclass, jint aUid)
 {
 	TInt res = 0;
@@ -25,49 +25,49 @@ JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc_
 	return res;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1launchApp
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchApp
 	(JNIEnv *, jclass, jint, jstring)
 {
 	// TODO
 	return KErrNotSupported;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1bringAppToForeground
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground
 	(JNIEnv *, jclass, jint, jboolean, jint, jstring)
 {
 	// TODO
 	return KErrNotSupported;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1getMidletUid
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletUid
 	(JNIEnv *, jclass, jstring, jstring, jint)
 {
 	// TODO
 	return 0;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1getMidletSuiteVersion
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletSuiteVersion
 	(JNIEnv *, jclass, jstring, jstring, jintArray)
 {
 	// TODO
 	return KErrNotSupported;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1launchMidlet
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet
 	(JNIEnv *, jclass, jstring, jstring, jint, jstring)
 {
 	// TODO
 	return KErrNotSupported;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1bringMidletToForeground
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringMidletToForeground
 	(JNIEnv *, jclass, jstring, jstring, jint)
 {
 	// TODO
 	return KErrNotSupported;
 }
 
-JNIEXPORT jint JNICALL Java_com_symbian_midp_runtime_properties_PropertySet_1cc__1getInstalledSisVersion
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getInstalledSisVersion
 	(JNIEnv *, jclass, jint, jintArray)
 {
 	// TODO
