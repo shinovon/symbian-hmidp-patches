@@ -3,6 +3,8 @@
 
 HBufC* jstringToDes(JNIEnv* aEnv, jstring aStr)
 {
+	if (aStr == NULL) return NULL;
+	
 	HBufC* res = 0;
 	jboolean iscopy;
 	const jchar* jchr = aEnv->GetStringChars(aStr, &iscopy);
@@ -46,11 +48,13 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRu
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchApp
 	(JNIEnv *aEnv, jclass, jint aUid, jstring aDoc)
 {
-	HBufC* doc = jstringToDes(aEnv, aDoc);
+	TPtrC doc(KNullDesC);
+	HBufC* docBuf = jstringToDes(aEnv, aDoc);
+	if (docBuf) doc.Set(docBuf->Des());
 	
-	TRAPD(err, DoLaunchAppUidL(TUid::Uid(aUid), doc == NULL ? KNullDesC() : doc->Des()));
+	TRAPD(err, DoLaunchAppUidL(TUid::Uid(aUid), doc));
 	
-	if (doc) delete doc;
+	if (docBuf) delete docBuf;
 	
 	return err;
 }
@@ -59,7 +63,9 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAp
 	(JNIEnv *aEnv, jclass, jint aUid, jboolean aSendMessage, jint aMessage, jstring aData)
 {
 	// TODO
-	return KErrNotSupported;
+	TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid)));
+	
+	return err;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletUid
