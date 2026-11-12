@@ -44,14 +44,19 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRu
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchApp
-	(JNIEnv *aEnv, jclass, jint, jstring)
+	(JNIEnv *aEnv, jclass, jint aUid, jstring aDoc)
 {
-	// TODO
-	return KErrNotSupported;
+	HBufC* doc = jstringToDes(aEnv, aDoc);
+	
+	TRAPD(err, DoLaunchAppUidL(TUid::Uid(aUid), doc == NULL ? KNullDesC() : doc->Des()));
+	
+	if (doc) delete doc;
+	
+	return err;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground
-	(JNIEnv *aEnv, jclass, jint, jboolean, jint, jstring)
+	(JNIEnv *aEnv, jclass, jint aUid, jboolean aSendMessage, jint aMessage, jstring aData)
 {
 	// TODO
 	return KErrNotSupported;
@@ -73,10 +78,22 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getMidl
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletSuiteVersion
-	(JNIEnv *aEnv, jclass, jstring, jstring, jintArray)
+	(JNIEnv *aEnv, jclass, jstring aName, jstring aVendor, jintArray aOut)
 {
-	// TODO
-	return KErrNotSupported;
+	HBufC* name = jstringToDes(aEnv, aName);
+	HBufC* vendor = jstringToDes(aEnv, aVendor);
+	
+	TAppVersion version;
+	TRAPD(err, version = DoGetMidletSuiteVersionL(name->Des(), vendor->Des()));
+	if (err == KErrNone) {
+		jint res[3] = { version.iMajor, version.iMinor, version.iBuild };
+		aEnv->SetIntArrayRegion(aOut, 0, 3, res);
+	}
+	
+	delete vendor;
+	delete name;
+	
+	return err;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet
@@ -86,14 +103,13 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchM
 	HBufC* vendor = jstringToDes(aEnv, aVendor);
 	HBufC* cmd = jstringToDes(aEnv, aCmd);
 	
-	TInt res;
-	TRAP(res, DoLaunchMidletL(cmd->Des(), name->Des(), vendor->Des(), aNum));
+	TRAPD(err, DoLaunchMidletL(cmd->Des(), name->Des(), vendor->Des(), aNum));
 	
 	delete cmd;
 	delete vendor;
 	delete name;
 	
-	return res;
+	return err;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringMidletToForeground
@@ -102,18 +118,23 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringMi
 	HBufC* name = jstringToDes(aEnv, aName);
 	HBufC* vendor = jstringToDes(aEnv, aVendor);
 	
-	TInt res;
-	TRAP(res, DoBringMidletToForegroundL(name->Des(), vendor->Des(), aNum));
+	TRAPD(err, DoBringMidletToForegroundL(name->Des(), vendor->Des(), aNum));
 	
 	delete vendor;
 	delete name;
 	
-	return res;
+	return err;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getInstalledSisVersion
 	(JNIEnv *aEnv, jclass, jint aUid, jintArray aOut)
 {
-	// TODO
-	return KErrNotSupported;
+	TVersion version;
+	TRAPD(err, version = DoGetInstalledSisVersionL(TUid::Uid(aUid)));
+	if (err == KErrNone) {
+		jint res[3] = { version.iMajor, version.iMinor, version.iBuild };
+		aEnv->SetIntArrayRegion(aOut, 0, 3, res);
+	}
+	
+	return err;
 }
