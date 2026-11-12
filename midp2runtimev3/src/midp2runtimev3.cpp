@@ -301,7 +301,7 @@ static void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidl
 static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KBringMidletToForegroundPrefix.iTypeLength) return NULL;
 
-	TPtrC param = aProperty->Mid(KGetMidletUidPrefix.iTypeLength);
+	TPtrC param = aProperty->Mid(KBringMidletToForegroundPrefix.iTypeLength);
 	TInt splitIdx = param.Locate(';');
 	
 	if (splitIdx == -1) return NULL;
@@ -413,7 +413,7 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 }
 
 static HBufC* GetVersionL() {
-	HBufC* res = HBufC16::NewLC(4);
+	HBufC* res = HBufC16::NewLC(8);
 	res->Des().Append(KApiVersion);
 	CleanupStack::Pop();
 	return res;
