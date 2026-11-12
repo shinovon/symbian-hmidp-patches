@@ -8,7 +8,7 @@ package com.mascotcapsule.micro3d.v3;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.MascotMEHelper;
+import javax.microedition.lcdui._MascotMEHelper;
 
 public class Graphics3D {
 	//Constants
@@ -323,7 +323,7 @@ public class Graphics3D {
 		
 		fbSize: {
 			try {
-				Object target = MascotMEHelper.getGraphicsTarget(graphics);
+				Object target = _MascotMEHelper.getGraphicsTarget(graphics);
 				if (target instanceof Image) {
 					fbWidth = ((Image) target).getWidth();
 					fbHeight = ((Image) target).getHeight();
