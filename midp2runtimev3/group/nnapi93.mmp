@@ -1,0 +1,35 @@
+TARGET nnapi93.dll
+TARGETTYPE dll
+UID 0x1000008d 0xe5a9f4e2
+VENDORID 0x70000001
+
+CAPABILITY all -tcb
+ARMFPU softvfp
+
+SYSTEMINCLUDE \epoc32\include
+SYSTEMINCLUDE \epoc32\include\mw
+SYSTEMINCLUDE \epoc32\include\platform
+SYSTEMINCLUDE \epoc32\include\platform\mw
+SYSTEMINCLUDE \epoc32\include\platform\app
+SYSTEMINCLUDE \epoc32\include\libc
+USERINCLUDE ..\inc
+USERINCLUDE ..\src.jrt
+
+DEBUGGABLE_UDEBONLY
+
+SOURCEPATH ..\src
+SOURCE common.cpp
+
+SOURCEPATH ..\src.jrt
+SOURCE nnapi93.cpp
+SOURCE lookup.cpp
+
+LIBRARY euser.lib
+LIBRARY hal.lib
+LIBRARY efsrv.lib
+LIBRARY bafl.lib
+LIBRARY apgrfx.lib
+LIBRARY apparc.lib
+LIBRARY ws32.lib
+LIBRARY sisregistryclient.lib
+LIBRARY estlib.lib

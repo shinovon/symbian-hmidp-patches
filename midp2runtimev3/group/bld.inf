@@ -4,3 +4,6 @@ DEFAULT
 PRJ_MMPFILES
 midp2runtimev3.mmp
 midp2launcher.mmp
+#ifdef EKA2
+nnapi93.mmp
+#endif
