@@ -17,8 +17,8 @@ public class SystemPropertiesExtensionHandler extends Hashtable {
 
 	public Object get(Object aName) {
 		String propertyValue = null;
+		String propertyName = (String) aName;
 		try {
-			String propertyName = (String) aName;
 			if (propertyName != null && propertyName.startsWith("cc.nnproject.symbianext.")) {
 				propertyValue = PropertyExtensions.getProperty(propertyName);
 				if (propertyValue != null) {
@@ -38,12 +38,17 @@ public class SystemPropertiesExtensionHandler extends Hashtable {
 				}
 				return null;
 			}
-			return propertyValue;
+			if (propertyValue != null) return propertyValue;
 		} catch (Throwable t) {
 			System.err.println("Error in system properties: Key=" + aName + ", Val ='" + propertyValue + "', Msg=" + t.getMessage());
 
 			t.printStackTrace();
 		}
+		
+		try {
+			return com.symbian.j2me.System.getProperty(propertyName);
+		} catch (Throwable ignored) {}
+		
 		return null;
 	}
 
