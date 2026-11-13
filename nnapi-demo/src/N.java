@@ -56,7 +56,7 @@ public class N extends MIDlet implements CommandListener, Runnable {
 				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + mpgramUid))) {
 					f.append("foreground mpgram: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + mpgramUid) + "\n");
 				} else {
-					f.append("launch mpgram: " + System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject") + "\n");
+					f.append("launch mpgram: " + System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject;1;-Durl=https://t.me/nnmidlets") + "\n");
 				}
 				break;
 			}
