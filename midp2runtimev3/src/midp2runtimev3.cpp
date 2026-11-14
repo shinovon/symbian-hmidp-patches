@@ -25,6 +25,8 @@ _LIT(KGetMidletSuiteVersionPrefix, "cc.nnproject.symbianext.getMidletSuiteVersio
 _LIT(KIsAppRunningPrefix, "cc.nnproject.symbianext.isAppRunning:");
 _LIT(KBringAppToForegroundPrefix, "cc.nnproject.symbianext.bringAppToForeground:");
 _LIT(KBringMidletToForegroundPrefix, "cc.nnproject.symbianext.bringMidletToForeground:");
+_LIT(KSetGlobalDataPrefix, "cc.nnproject.symbianext.setGlobalData:");
+_LIT(KGetGlobalDataPrefix, "cc.nnproject.symbianext.getGlobalData:");
 _LIT(KTrue, "true");
 _LIT(KFalse, "false");
 _LIT(KApiVersion, "1.0");
@@ -37,6 +39,25 @@ static TBool ParseInt(TPtrC aDes, TUint32& aVal) {
 	TBool hex = aDes.Find(_L("0x")) == 0;
 	if (hex) lexer.Inc(2);
 	return lexer.Val(aVal, hex ? EHex : EDecimal) == KErrNone;
+}
+
+static HBufC* GetVersionL() {
+	HBufC* res = HBufC16::NewLC(8);
+	res->Des().Append(KApiVersion);
+	CleanupStack::Pop();
+	return res;
+}
+
+static HBufC* GetVariantL() {
+	HBufC* res = HBufC16::NewLC(10);
+	// jrt1 on j9
+#ifdef EKA2
+	res->Des().Append(_L("hmidp_eka2"));
+#else
+	res->Des().Append(_L("hmidp_eka1"));
+#endif
+	CleanupStack::Pop();
+	return res;
 }
 
 static HBufC* GetFreeRamL() {
@@ -211,58 +232,6 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 	return res;
 }
 
-static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
-	if ((TUint32)aProperty->Length() <= KBringMidletToForegroundPrefix.iTypeLength) return NULL;
-
-	TPtrC param = aProperty->Mid(KBringMidletToForegroundPrefix.iTypeLength);
-	TInt splitIdx = param.Locate(';');
-	
-	if (splitIdx == -1) return NULL;
-	TPtrC name = param.Left(splitIdx);
-	TPtrC vendor = param.Mid(splitIdx + 1);
-	TUint32 midletId = 1;
-	
-	splitIdx = vendor.Locate(';');
-	if (splitIdx != -1) {
-		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
-		vendor.Set(vendor.Left(splitIdx));
-		
-		TLex lexer(midletIdDes);
-		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
-	}
-	
-	// TODO
-	TRAPD(err, DoBringMidletToForegroundL(name, vendor, midletId));
-	HBufC* res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
-	
-	return res;
-}
-
-#ifdef EKA2
-static HBufC* GetInstalledSisVersionL(TDesC* aProperty) {
-	if ((TUint32)aProperty->Length() <= KGetInstalledSisVersionPrefix.iTypeLength) return NULL;
-
-	TUint32 uid;
-	if (!ParseInt(aProperty->Mid(KGetInstalledSisVersionPrefix.iTypeLength), uid)) {
-		return NULL;
-	}
-	
-	TVersion version = DoGetInstalledSisVersionL(TUid::Uid(uid));
-	HBufC* res = res = HBufC::NewLC(16);
-	TPtr16 des = res->Des();
-	des.AppendNum((TInt)version.iMajor);
-	des.Append('.');
-	des.AppendNum((TInt)version.iMinor);
-	des.Append('.');
-	des.AppendNum((TInt)version.iBuild);
-	CleanupStack::Pop();
-	
-	return res;
-}
-#endif
-
 static HBufC* LaunchAppL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KLaunchAppPrefix.iTypeLength) return NULL;
 	
@@ -286,25 +255,6 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 	res->Des().AppendNum((TInt)err);
 	CleanupStack::Pop();
 	
-	return res;
-}
-
-static HBufC* GetVersionL() {
-	HBufC* res = HBufC16::NewLC(8);
-	res->Des().Append(KApiVersion);
-	CleanupStack::Pop();
-	return res;
-}
-
-static HBufC* GetVariantL() {
-	HBufC* res = HBufC16::NewLC(10);
-	// jrt1 on j9
-#ifdef EKA2
-	res->Des().Append(_L("hmidp_eka2"));
-#else
-	res->Des().Append(_L("hmidp_eka1"));
-#endif
-	CleanupStack::Pop();
 	return res;
 }
 
@@ -392,6 +342,102 @@ static HBufC* LaunchMidletL(TDesC* aProperty) {
 	return res;
 }
 
+static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KBringMidletToForegroundPrefix.iTypeLength) return NULL;
+
+	TPtrC param = aProperty->Mid(KBringMidletToForegroundPrefix.iTypeLength);
+	TInt splitIdx = param.Locate(';');
+	
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC vendor = param.Mid(splitIdx + 1);
+	TUint32 midletId = 1;
+	
+	splitIdx = vendor.Locate(';');
+	if (splitIdx != -1) {
+		TPtrC midletIdDes = vendor.Mid(splitIdx + 1);
+		vendor.Set(vendor.Left(splitIdx));
+		
+		TLex lexer(midletIdDes);
+		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
+	}
+	
+	// TODO
+	TRAPD(err, DoBringMidletToForegroundL(name, vendor, midletId));
+	HBufC* res = HBufC16::NewLC(16);
+	res->Des().AppendNum((TInt)err);
+	CleanupStack::Pop();
+	
+	return res;
+}
+
+static HBufC* SetGlobalDataL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KSetGlobalDataPrefix.iTypeLength) return NULL;
+
+	TPtrC param = aProperty->Mid(KSetGlobalDataPrefix.iTypeLength);
+	TInt splitIdx = param.Locate(';');
+	
+	if (splitIdx == -1) return NULL;
+	TPtrC name = param.Left(splitIdx);
+	TPtrC data = param.Mid(splitIdx + 1);
+	if (name.Length() == 0 || name.Length() > 32 || data.Length() > 1024) return NULL; 
+	
+	HBufC* nameBuf = HBufC::NewLC(name.Length() + 10);
+	TPtr name2 = nameBuf->Des();
+	name2.Append(_L("MIDP2Data."));
+	name2.Append(param);
+	
+	TRAPD(err, DoSetGlobalDataL(name2, data));
+	HBufC* res = HBufC16::NewLC(16);
+	res->Des().AppendNum((TInt)err);
+	CleanupStack::Pop();
+	
+	CleanupStack::PopAndDestroy(); // nameBuf
+	
+	return res;
+}
+
+static HBufC* GetGlobalDataL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KGetGlobalDataPrefix.iTypeLength) return NULL;
+
+	TPtrC param = aProperty->Mid(KGetGlobalDataPrefix.iTypeLength);
+	if (param.Length() == 0 || param.Length() > 32) return NULL; 
+	
+	HBufC* nameBuf = HBufC::NewLC(param.Length() + 10);
+	TPtr name2 = nameBuf->Des();
+	name2.Append(_L("MIDP2Data."));
+	name2.Append(param);
+	
+	HBufC* res = DoGetGlobalDataL(name2);
+	
+	CleanupStack::PopAndDestroy(); // nameBuf
+	
+	return res;
+}
+
+#ifdef EKA2
+static HBufC* GetInstalledSisVersionL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KGetInstalledSisVersionPrefix.iTypeLength) return NULL;
+
+	TUint32 uid;
+	if (!ParseInt(aProperty->Mid(KGetInstalledSisVersionPrefix.iTypeLength), uid)) {
+		return NULL;
+	}
+	
+	TVersion version = DoGetInstalledSisVersionL(TUid::Uid(uid));
+	HBufC* res = res = HBufC::NewLC(16);
+	TPtr16 des = res->Des();
+	des.AppendNum((TInt)version.iMajor);
+	des.Append('.');
+	des.AppendNum((TInt)version.iMinor);
+	des.Append('.');
+	des.AppendNum((TInt)version.iBuild);
+	CleanupStack::Pop();
+	
+	return res;
+}
+#endif
+
 HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	HBufC* res = NULL;
 #ifndef EKA2
@@ -466,6 +512,14 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	}
 	if (aProperty->Find(KBringMidletToForegroundPrefix) == 0) {
 		TRAP_IGNORE(res = BringMidletToForegroundL(aProperty));
+		return res;
+	}
+	if (aProperty->Find(KSetGlobalDataPrefix) == 0) {
+		TRAP_IGNORE(res = SetGlobalDataL(aProperty));
+		return res;
+	}
+	if (aProperty->Find(KGetGlobalDataPrefix) == 0) {
+		TRAP_IGNORE(res = GetGlobalDataL(aProperty));
 		return res;
 	}
 #ifdef EKA2

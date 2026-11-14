@@ -104,6 +104,21 @@ public class PropertyExtensions {
 
 				return Integer.toString(_bringMidletToForeground(params[0], params[1], midletNum));
 			}
+			if (property.startsWith("cc.nnproject.symbianext.setGlobalData:")) {
+				String[] params = parseParams(property, 2, 2);
+				if (params == null) return null;
+				if (params[0] == null || params[1] == null) return null;
+				if (params[0].length() == 0 || params[0].length() > 32 || params[1].length() > 1024) return null;
+
+				return Integer.toString(_setGlobalData("MIDP2Data." + params[0], params[1]));
+			}
+			if (property.startsWith("cc.nnproject.symbianext.getGlobalData:")) {
+				String[] params = parseParams(property, 1, 1);
+				if (params == null || params[0] == null) return null;
+				if (params[0].length() == 0 || params[0].length() > 32) return null;
+
+				return _getGlobalData("MIDP2Data." + params[0]);
+			}
 			if (property.startsWith("cc.nnproject.symbianext.getInstalledSisVersion:")) {
 				String[] params = parseParams(property, 1, 1);
 				if (params == null) return null;
@@ -160,6 +175,8 @@ public class PropertyExtensions {
 	private static native int _getMidletSuiteVersion(String name, String vendor, int[] out);
 	private static native int _launchMidlet(String name, String vendor, int num, String cmd);
 	private static native int _bringMidletToForeground(String name, String vendor, int num);
+	private static native int _setGlobalData(String name, String data);
+	private static native String _getGlobalData(String name);
 	
 	private static native int _getInstalledSisVersion(int uid, int[] out);
 	

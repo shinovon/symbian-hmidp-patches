@@ -216,6 +216,47 @@ void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
 	if (!res) User::Leave(KErrNotFound);
 }
 
+void DoSetGlobalDataL(TPtrC aName, TPtrC aData) {
+	TInt size = sizeof(TInt) + aData.Size();
+	
+	RChunk chunk;
+	TInt err = chunk.CreateGlobal(aName, size, 1024 * sizeof(TUint16) + sizeof(TInt));
+	if (err == KErrAlreadyExists) {
+		err = chunk.OpenGlobal(aName, EFalse);
+	}
+	User::LeaveIfError(err);
+	CleanupClosePushL(chunk);
+	
+	if (size > chunk.Size()) {
+		User::LeaveIfError(chunk.Adjust(size));
+	}
+	
+	TUint8* base = chunk.Base();
+	*reinterpret_cast<TInt*>(base) = aData.Length();
+	
+	TPtr dest(reinterpret_cast<TUint16*>(base + sizeof(TInt)), 1024);
+	dest.Copy(aData);
+	
+	CleanupStack::PopAndDestroy(); // chunk
+}
+
+HBufC* DoGetGlobalDataL(TPtrC aName) {
+	RChunk chunk;
+	User::LeaveIfError(chunk.OpenGlobal(aName, EFalse));
+	CleanupClosePushL(chunk);
+	
+	const TUint8* base = chunk.Base();
+	TInt len = *reinterpret_cast<const TInt*>(base);
+	if (len < 0 || len > 1024) User::Leave(KErrCorrupt);
+	
+	TPtrC16 data(reinterpret_cast<const TUint16*>(base + sizeof(TInt)), len);
+	HBufC* res = data.AllocL();
+	
+	CleanupStack::PopAndDestroy(); // chunk
+	
+	return res;
+}
+
 #ifdef EKA2
 TVersion DoGetInstalledSisVersionL(TUid aUid) {
 	Swi::RSisRegistrySession session;

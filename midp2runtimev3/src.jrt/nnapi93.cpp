@@ -21,6 +21,11 @@ HBufC* jstringToDes(JNIEnv* aEnv, jstring aStr)
 	return res;
 }
 
+jstring desToJstring(JNIEnv* aEnv, const HBufC* aBuf) {
+	jstring str = aEnv->NewString(aBuf->Ptr(), aBuf->Length());
+	return str;
+}
+
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1checkTLS12
 	(JNIEnv *, jclass)
 {
@@ -130,6 +135,38 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringMi
 	delete name;
 	
 	return err;
+}
+
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1setGlobalData
+	(JNIEnv *aEnv, jclass, jstring aName, jstring aData)
+{
+	HBufC* name = jstringToDes(aEnv, aName);
+	HBufC* data = jstringToDes(aEnv, aData);
+	
+	TRAPD(err, DoSetGlobalDataL(name->Des(), data->Des()));
+	
+	delete data;
+	delete name;
+	
+	return err;
+}
+
+JNIEXPORT jstring JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getGlobalData
+	(JNIEnv *aEnv, jclass, jstring aName)
+{
+	HBufC* name = jstringToDes(aEnv, aName);
+	
+	HBufC* data = NULL;
+	TRAP_IGNORE(data = DoGetGlobalDataL(name->Des()));
+	jstring res = NULL;
+	if (data) {
+		res = desToJstring(aEnv, data);
+		delete data;
+	}
+	
+	delete name;
+	
+	return res;
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getInstalledSisVersion
