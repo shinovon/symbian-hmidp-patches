@@ -128,13 +128,42 @@ if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + g
 
 ### `cc.nnproject.symbianext.setGlobalData:<name>;<data>`
 
+Writes data to global OS chunk
+
 FUTURE
+
+Parameters:
+- name: Chunk name
+- data: Data to write
+
+Example:
+```
+System.getProperty("cc.nnproject.symbianext.setGlobalData:some_url;https://example.com/");
+System.getProperty("cc.nnproject.symbianext.bringMidletToForeground:Some;Vendor");
+```
 
 ---
 
 ### `cc.nnproject.symbianext.getGlobalData:<name>`
 
+Reads data from global OS chunk
+
 FUTURE
+
+Parameters:
+- name: Chunk name
+
+Example:
+```
+// on resume: repeated startApp(), onShown(), etc.
+String data = System.getProperty("cc.nnproject.symbianext.getGlobalData:some_url");
+if (data != null && data.length() != 0) {
+    // acknowledge
+    System.getProperty("cc.nnproject.symbianext.setGlobalData:some_url;");
+    handleUrl(data);
+}
+```
+
 
 ---
 
