@@ -208,33 +208,39 @@ void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
 	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
 	TUid uid = midlet->UidL();
 
-	TBool res = DoBringAppToForegroundL(uid);
+	if (!DoBringAppToForegroundL(uid)) User::Leave(KErrNotFound);
 	
 	CleanupStack::PopAndDestroy(); // registry
 	CleanupStack::PopAndDestroy(); // lib
+}
+
+void DoCreateGlobalDataL(TPtrC aName) {
+	RChunk chunk;
+	User::LeaveIfError(chunk.CreateGlobal(aName, sizeof(TInt), 1024 * sizeof(TUint16) + sizeof(TInt)));
 	
-	if (!res) User::Leave(KErrNotFound);
+	// let chunk handle leak
 }
 
 void DoSetGlobalDataL(TPtrC aName, TPtrC aData) {
 	TInt size = sizeof(TInt) + aData.Size();
 	
 	RChunk chunk;
-	TInt err = chunk.CreateGlobal(aName, size, 1024 * sizeof(TUint16) + sizeof(TInt));
-	if (err == KErrAlreadyExists) {
-		err = chunk.OpenGlobal(aName, EFalse);
-	}
-	User::LeaveIfError(err);
+//	TInt err = chunk.CreateGlobal(aName, size, 1024 * sizeof(TUint16) + sizeof(TInt));
+//	if (err == KErrAlreadyExists) {
+//		err = chunk.OpenGlobal(aName, EFalse);
+//	}
+	User::LeaveIfError(chunk.OpenGlobal(aName, EFalse));
 	CleanupClosePushL(chunk);
 	
-	if (size > chunk.Size()) {
-		User::LeaveIfError(chunk.Adjust(size));
-	}
+//	if (size > chunk.Size()) {
+	User::LeaveIfError(chunk.Adjust(size));
+//	}
 	
 	TUint8* base = chunk.Base();
 	*reinterpret_cast<TInt*>(base) = aData.Length();
-	
-	TPtr dest(reinterpret_cast<TUint16*>(base + sizeof(TInt)), 1024);
+	TUint16* destBuf = reinterpret_cast<TUint16*>(base + sizeof(TInt));
+	TInt destLen = (chunk.Size() - sizeof(TInt)) / sizeof(TUint16);
+	TPtr dest(destBuf, destLen);
 	dest.Copy(aData);
 	
 	CleanupStack::PopAndDestroy(); // chunk
@@ -244,6 +250,8 @@ HBufC* DoGetGlobalDataL(TPtrC aName) {
 	RChunk chunk;
 	User::LeaveIfError(chunk.OpenGlobal(aName, EFalse));
 	CleanupClosePushL(chunk);
+	
+	if (chunk.Size() < sizeof(TInt)) User::Leave(KErrUnderflow);
 	
 	const TUint8* base = chunk.Base();
 	TInt len = *reinterpret_cast<const TInt*>(base);

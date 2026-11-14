@@ -9,13 +9,16 @@ const FuncTable funcTable[] = {
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1bringMidletToForeground", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1bringMidletToForeground},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1checkTLS12", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1checkTLS12},
+   { "Java_cc_nnproject_symbianext_PropertyExtensions__1createGlobalData", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1createGlobalData},
+   { "Java_cc_nnproject_symbianext_PropertyExtensions__1getGlobalData", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1getGlobalData},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1getInstalledSisVersion", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1getInstalledSisVersion},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletSuiteVersion", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletSuiteVersion},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletUid", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1getMidletUid},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1isAppInstalled", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1isAppInstalled},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRunning", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRunning},
    { "Java_cc_nnproject_symbianext_PropertyExtensions__1launchApp", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1launchApp},
-   { "Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet}
+   { "Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1launchMidlet},
+   { "Java_cc_nnproject_symbianext_PropertyExtensions__1setGlobalData", (unsigned int) Java_cc_nnproject_symbianext_PropertyExtensions__1setGlobalData}
 };
 
 IMPORT_C TFunc jni_lookup(const char* name);

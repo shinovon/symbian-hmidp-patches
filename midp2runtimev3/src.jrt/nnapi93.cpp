@@ -151,6 +151,18 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1setGlob
 	return err;
 }
 
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1createGlobalData
+	(JNIEnv *aEnv, jclass, jstring aName)
+{
+	HBufC* name = jstringToDes(aEnv, aName);
+	
+	TRAPD(err, DoCreateGlobalDataL(name->Des()));
+	
+	delete name;
+	
+	return err;
+}
+
 JNIEXPORT jstring JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getGlobalData
 	(JNIEnv *aEnv, jclass, jstring aName)
 {

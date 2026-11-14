@@ -104,7 +104,7 @@ if (!"0".equals(System.getProperty("cc.nnproject.symbianext.bringMidletToForegro
 
 ### `cc.nnproject.symbianext.getMidletUid:<name>;<vendor>[;<num>]`
 
-Gets registered UID of Java application, can be used for isAppRunning
+Gets registered UID of Java application
 
 Parameters:
 - name: MIDlet suite name
@@ -126,6 +126,22 @@ if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + g
 
 ## Java IPC
 
+### `cc.nnproject.symbianext.createGlobalData:<name>`
+
+Allocates global OS chunk attached to current process
+
+Parameters:
+- name: Chunk name, maximum length is 32
+
+Returns 0 if operation was successful
+
+Example:
+```
+System.getProperty("cc.nnproject.symbianext.createGlobalData:some_launchUrl");
+```
+
+---
+
 ### `cc.nnproject.symbianext.setGlobalData:<name>;<data>`
 
 Writes data to global OS chunk
@@ -133,6 +149,8 @@ Writes data to global OS chunk
 Parameters:
 - name: Chunk name, maximum length is 32
 - data: Data to write, maximum length is 1024
+
+Returns 0 if operation was successful
 
 Example:
 ```
@@ -149,9 +167,11 @@ Reads data from global OS chunk
 Parameters:
 - name: Chunk name, maximum length is 32
 
+Returns written data
+
 Example:
 ```
-// on resume: repeated startApp(), onShown(), etc.
+// check on resume: repeated startApp(), showNotify(), etc.
 String data = System.getProperty("cc.nnproject.symbianext.getGlobalData:some_launchUrl");
 if (data != null && data.length() != 0) {
     // acknowledge

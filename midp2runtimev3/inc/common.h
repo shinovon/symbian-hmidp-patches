@@ -19,6 +19,7 @@ TInt32 DoGetMidletUidL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId);
 TAppVersion DoGetMidletSuiteVersionL(TPtrC aName, TPtrC aVendor);
 void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aMidletId);
 void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId);
+void DoCreateGlobalDataL(TPtrC aName);
 void DoSetGlobalDataL(TPtrC aName, TPtrC aData);
 HBufC* DoGetGlobalDataL(TPtrC aName);
 

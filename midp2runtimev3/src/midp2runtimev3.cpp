@@ -25,6 +25,7 @@ _LIT(KGetMidletSuiteVersionPrefix, "cc.nnproject.symbianext.getMidletSuiteVersio
 _LIT(KIsAppRunningPrefix, "cc.nnproject.symbianext.isAppRunning:");
 _LIT(KBringAppToForegroundPrefix, "cc.nnproject.symbianext.bringAppToForeground:");
 _LIT(KBringMidletToForegroundPrefix, "cc.nnproject.symbianext.bringMidletToForeground:");
+_LIT(KCreateGlobalDataPrefix, "cc.nnproject.symbianext.createGlobalData:");
 _LIT(KSetGlobalDataPrefix, "cc.nnproject.symbianext.setGlobalData:");
 _LIT(KGetGlobalDataPrefix, "cc.nnproject.symbianext.getGlobalData:");
 _LIT(KTrue, "true");
@@ -362,11 +363,31 @@ static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
 		if (lexer.Val(midletId, EDecimal) != KErrNone) return NULL;
 	}
 	
-	// TODO
 	TRAPD(err, DoBringMidletToForegroundL(name, vendor, midletId));
 	HBufC* res = HBufC16::NewLC(16);
 	res->Des().AppendNum((TInt)err);
 	CleanupStack::Pop();
+	
+	return res;
+}
+
+static HBufC* CreateGlobalDataL(TDesC* aProperty) {
+	if ((TUint32)aProperty->Length() <= KCreateGlobalDataPrefix.iTypeLength) return NULL;
+
+	TPtrC param = aProperty->Mid(KCreateGlobalDataPrefix.iTypeLength);
+	if (param.Length() > 32) return NULL; 
+	
+	HBufC* nameBuf = HBufC::NewLC(param.Length() + 10);
+	TPtr name2 = nameBuf->Des();
+	name2.Append(_L("MIDP2Data."));
+	name2.Append(param);
+
+	TRAPD(err, DoCreateGlobalDataL(name2));
+	HBufC* res = HBufC16::NewLC(16);
+	res->Des().AppendNum((TInt)err);
+	CleanupStack::Pop();
+	
+	CleanupStack::PopAndDestroy(); // nameBuf
 	
 	return res;
 }

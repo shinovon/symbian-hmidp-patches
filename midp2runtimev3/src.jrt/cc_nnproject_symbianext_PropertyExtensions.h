@@ -81,6 +81,30 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringMi
 
 /*
  * Class:     cc_nnproject_symbianext_PropertyExtensions
+ * Method:    _createGlobalData
+ * Signature: (Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1createGlobalData
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     cc_nnproject_symbianext_PropertyExtensions
+ * Method:    _setGlobalData
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1setGlobalData
+  (JNIEnv *, jclass, jstring, jstring);
+
+/*
+ * Class:     cc_nnproject_symbianext_PropertyExtensions
+ * Method:    _getGlobalData
+ * Signature: (Ljava/lang/String;)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1getGlobalData
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     cc_nnproject_symbianext_PropertyExtensions
  * Method:    _getInstalledSisVersion
  * Signature: (I[I)I
  */
