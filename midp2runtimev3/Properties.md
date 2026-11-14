@@ -15,7 +15,7 @@ if (System.getProperty("cc.nnproject.symbianext.version") != null) {
 
 ### `cc.nnproject.symbianext.variant`
 
-Returns installed patch variant, can be `hmidp_eka2`, `hmidp_eka1`, or `jrt1`
+Returns installed patch variant, possible values: `hmidp_eka2`, `hmidp_eka1`, or `jrt1`.
 
 ---
 
@@ -120,6 +120,21 @@ if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + g
     // ...
 }
 ```
+
+---
+
+
+## Java IPC
+
+### `cc.nnproject.symbianext.setGlobalData:<name>;<data>`
+
+FUTURE
+
+---
+
+### `cc.nnproject.symbianext.getGlobalData:<name>`
+
+FUTURE
 
 ---
 
@@ -240,7 +255,7 @@ if (version == null) {
 
 
 
-## Nokia extensions
+## Ported Nokia extensions
 
 ### `com.nokia.memoryramfree`
 
@@ -255,5 +270,20 @@ Check Java Developers Library for documentation
 Returns battery charge level 0-100, mimics S60v3 FP2 behavior
 
 Check Java Developers Library for documentation
+
+---
+
+### `com.nokia.network.access`
+
+Returns network access type of connection currently used, almost mimics S60v3 FP2 behavior, explanation below:
+
+Possible values: `lan`, `pd`, `pd.EDGE`, `pd.3G`, `csd`, `bt_pan`, `wlan`, or `na`.\
+Since there is no way to differentiate WCDMA and HSDPA in older versions of OS, it will return `pd.3G` for both.
+
+Unlike official API, it will not return type of default access point when not connected.
+
+Not available on UIQ3.
+
+---
 
 

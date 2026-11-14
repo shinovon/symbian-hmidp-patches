@@ -7,7 +7,9 @@
 #define MJavaRegistry_CreateL 3
 #endif
 
+#ifdef EKA2
 TBool DoCheckMbedTlsL();
+#endif
 TBool DoIsAppInstalledL(TUid aUid);
 TBool DoIsAppRunningL(TUid aUid);
 void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc = KNullDesC());

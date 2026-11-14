@@ -9,6 +9,7 @@
 #include <swi/sisregistryentry.h>
 #endif
 
+#ifdef EKA2
 TBool DoCheckMbedTlsL() {
 	TBool res = EFalse;
 	
@@ -36,6 +37,7 @@ TBool DoCheckMbedTlsL() {
 	
 	return res;
 }
+#endif
 
 TBool DoIsAppInstalledL(TUid aUid) {
 	RApaLsSession ls;

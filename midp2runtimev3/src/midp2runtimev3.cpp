@@ -4,6 +4,9 @@
 #include <etel3rdparty.h>
 #include <bautils.h>
 #include "common.h"
+#ifndef UIQ
+#include "javamobinfo.h"
+#endif
 
 #ifdef EKA2
 #define sizeof_Runtime 48
@@ -40,6 +43,15 @@ static HBufC* GetFreeRamL() {
 	HBufC* res = HBufC::NewLC(16);
 	int tmp;
 	HAL::Get(HALData::EMemoryRAMFree, tmp);
+	res->Des().AppendNum((TInt)tmp);
+	CleanupStack::Pop();
+	return res;
+}
+
+static HBufC* GetTotalRamL() {
+	HBufC* res = HBufC::NewLC(16);
+	int tmp;
+	HAL::Get(HALData::EMemoryRAM, tmp);
 	res->Des().AppendNum((TInt)tmp);
 	CleanupStack::Pop();
 	return res;
@@ -398,10 +410,20 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 		TRAP_IGNORE(res = GetFreeRamL());
 		return res;
 	}
+	if (!aProperty->Compare(_L("com.nokia.memoryramtotal"))) { // imaginary
+		TRAP_IGNORE(res = GetTotalRamL());
+		return res;
+	}
 	if (!aProperty->Compare(_L("com.nokia.mid.batterylevel"))) {
 		TRAP_IGNORE(res = GetBatteryLevelL());
 		return res;
 	}
+#ifndef UIQ
+	if (!aProperty->Compare(_L("com.nokia.network.access"))) {
+		TRAP_IGNORE(res = GetNetworkAccessL());
+		return res;
+	}
+#endif
 	if (!aProperty->Compare(_L("cc.nnproject.symbianext.version"))) {
 		TRAP_IGNORE(res = GetVersionL());
 		return res;

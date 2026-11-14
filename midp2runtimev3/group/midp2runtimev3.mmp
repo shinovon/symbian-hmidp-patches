@@ -30,6 +30,8 @@ LIBRARY bafl.lib
 LIBRARY apgrfx.lib
 LIBRARY apparc.lib
 LIBRARY ws32.lib
+LIBRARY esock.lib
+LIBRARY connmon.lib
 #ifdef EKA2
 LIBRARY sisregistryclient.lib
 #endif

@@ -1,0 +1,32 @@
+TARGET midp2runtimev3_uiq.dll
+TARGETTYPE dll
+UID 0x1000008d 0xe147b6b7
+VENDORID 0x70000001
+
+CAPABILITY ALL -TCB
+ARMFPU softvfp
+
+MACRO UIQ
+
+SYSTEMINCLUDE \epoc32\include
+SYSTEMINCLUDE \epoc32\include\mw
+SYSTEMINCLUDE \epoc32\include\platform
+SYSTEMINCLUDE \epoc32\include\platform\mw
+USERINCLUDE ..\inc
+
+SOURCEPATH ..\src
+SOURCE midp2runtimev3.cpp
+SOURCE common.cpp
+
+nostrictdef
+
+LIBRARY euser.lib
+LIBRARY hal.lib
+LIBRARY etel3rdparty.lib
+LIBRARY efsrv.lib
+LIBRARY bafl.lib
+LIBRARY apgrfx.lib
+LIBRARY apparc.lib
+LIBRARY ws32.lib
+LIBRARY esock.lib
+LIBRARY sisregistryclient.lib
