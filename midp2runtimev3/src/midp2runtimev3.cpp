@@ -385,7 +385,7 @@ static HBufC* SetGlobalDataL(TDesC* aProperty) {
 	HBufC* nameBuf = HBufC::NewLC(name.Length() + 10);
 	TPtr name2 = nameBuf->Des();
 	name2.Append(_L("MIDP2Data."));
-	name2.Append(param);
+	name2.Append(name);
 	
 	TRAPD(err, DoSetGlobalDataL(name2, data));
 	HBufC* res = HBufC16::NewLC(16);
@@ -400,13 +400,13 @@ static HBufC* SetGlobalDataL(TDesC* aProperty) {
 static HBufC* GetGlobalDataL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KGetGlobalDataPrefix.iTypeLength) return NULL;
 
-	TPtrC param = aProperty->Mid(KGetGlobalDataPrefix.iTypeLength);
-	if (param.Length() == 0 || param.Length() > 32) return NULL; 
+	TPtrC name = aProperty->Mid(KGetGlobalDataPrefix.iTypeLength);
+	if (name.Length() == 0 || name.Length() > 32) return NULL; 
 	
-	HBufC* nameBuf = HBufC::NewLC(param.Length() + 10);
+	HBufC* nameBuf = HBufC::NewLC(name.Length() + 10);
 	TPtr name2 = nameBuf->Des();
 	name2.Append(_L("MIDP2Data."));
-	name2.Append(param);
+	name2.Append(name);
 	
 	HBufC* res = DoGetGlobalDataL(name2);
 	
