@@ -53,9 +53,13 @@ static HBufC* GetVariantL() {
 	HBufC* res = HBufC16::NewLC(10);
 	// jrt1 on j9
 #ifdef EKA2
-	res->Des().Append(_L("hmidp_eka2"));
+#ifdef UIQ
+	res->Des().Append(_L("hmidpuiq3"));
 #else
-	res->Des().Append(_L("hmidp_eka1"));
+	res->Des().Append(_L("hmidps60v3"));
+#endif
+#else
+	res->Des().Append(_L("hmidps60v2"));
 #endif
 	CleanupStack::Pop();
 	return res;
@@ -533,6 +537,10 @@ HBufC* GetDynamicProperty(void* aThis, TDesC* aProperty) {
 	}
 	if (aProperty->Find(KBringMidletToForegroundPrefix) == 0) {
 		TRAP_IGNORE(res = BringMidletToForegroundL(aProperty));
+		return res;
+	}
+	if (aProperty->Find(KCreateGlobalDataPrefix) == 0) {
+		TRAP_IGNORE(res = CreateGlobalDataL(aProperty));
 		return res;
 	}
 	if (aProperty->Find(KSetGlobalDataPrefix) == 0) {

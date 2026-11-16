@@ -15,7 +15,7 @@ if (System.getProperty("cc.nnproject.symbianext.version") != null) {
 
 ### `cc.nnproject.symbianext.variant`
 
-Returns installed patch variant, possible values: `hmidp_eka2`, `hmidp_eka1`, or `jrt1`.
+Returns installed patch variant, possible values: `hmidps60v3`, `hmidps60v2`, `hmidpuiq3`, or `jrt1`.
 
 ---
 
