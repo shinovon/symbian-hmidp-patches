@@ -30,14 +30,16 @@ public:
 
 #ifdef EKA2
 #define CMIDToolkit_MMIDObserver_offset 5
+#define CMIDToolkit_MMIDObserver_size 16
 #define CMIDToolkit_iEnv 23
 #else
 #define CMIDToolkit_MMIDObserver_offset 6
+#define CMIDToolkit_MMIDObserver_size 24
 #define CMIDToolkit_iEnv 22
 #endif
 
 static int HandleForegroundEventHook(int* aThis, int foreground) {
-	int r = (((int (*)(int*, int)) (*(int*)(*aThis + 16))))(aThis, foreground);
+	int r = (((int (*)(int*, int)) (*(int*)(*aThis + CMIDToolkit_MMIDObserver_size))))(aThis, foreground);
 	
 	MMIDEnv* env = (MMIDEnv*) ((aThis - CMIDToolkit_MMIDObserver_offset)[CMIDToolkit_iEnv] + 4);
 #ifdef EKA2
@@ -55,21 +57,24 @@ static int HandleForegroundEventHook(int* aThis, int foreground) {
 	return r;
 }
 
-EXPORT_C void* NewFactoryL(int* a, int screenmode) {
+EXPORT_C void* NewFactoryL(int* a, int b) {
 	RLibrary lib;
 	User::LeaveIfError(lib.Load(_L("lcdgr")));
 #ifdef EKA2
-	void* r = ((void* (*)(int, int)) lib.Lookup(1))((a[20] + 40), screenmode);
+	void* r = ((void* (*)(int, int)) lib.Lookup(1))((a[20] + 40), b);
 	int* toolkit = a;
-#else
-	void* r = ((void* (*)(int, int)) lib.Lookup(1))((int) a, screenmode);
-	int* toolkit = (int*) a[2];
-#endif
-	
-	int* vtable = (int*) User::AllocL(20);
-	Mem::Copy(vtable, ((int**)toolkit)[CMIDToolkit_MMIDObserver_offset], 16);
+	int* vtable = (int*) User::AllocL(CMIDToolkit_MMIDObserver_size + 4);
+	Mem::Copy(vtable, ((int**)toolkit)[CMIDToolkit_MMIDObserver_offset], CMIDToolkit_MMIDObserver_size);
 	vtable[4] = vtable[1];
 	vtable[1] = (int)HandleForegroundEventHook;
+#else
+	void* r = ((void* (*)(int, int)) lib.Lookup(1))((int) a, b);
+	int* toolkit = (int*) (a - 1)[2];
+	int* vtable = (int*) User::AllocL(CMIDToolkit_MMIDObserver_size + 4);
+	Mem::Copy(vtable, ((int**)toolkit)[CMIDToolkit_MMIDObserver_offset], CMIDToolkit_MMIDObserver_size);
+	vtable[6] = vtable[3];
+	vtable[3] = (int)HandleForegroundEventHook;
+#endif
 	((int**) toolkit)[CMIDToolkit_MMIDObserver_offset] = vtable;
 	
 	return r;
