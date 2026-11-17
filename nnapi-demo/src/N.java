@@ -8,7 +8,6 @@ import javax.microedition.midlet.MIDlet;
 public class N extends MIDlet implements CommandListener, Runnable {
 
 	private static Form f;
-	private String mpgramUid;
 	private boolean started;
 
 	protected void destroyApp(boolean unconditional) {
@@ -39,8 +38,6 @@ public class N extends MIDlet implements CommandListener, Runnable {
 			f.append("tls: " + System.getProperty("cc.nnproject.symbianext.checkTLS12") + "\n");
 			f.append("xplore: " + System.getProperty("cc.nnproject.symbianext.getInstalledSisVersion:0xa0000bcd") + "\n");
 			f.append("mpgram: " + System.getProperty("cc.nnproject.symbianext.getMidletSuiteVersion:MPGram;nnproject") + "\n");
-			mpgramUid = System.getProperty("cc.nnproject.symbianext.getMidletUid:MPGram;nnproject");
-			f.append("mpgram uid: " + mpgramUid + "\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 			f.append(e.toString());
@@ -53,11 +50,12 @@ public class N extends MIDlet implements CommandListener, Runnable {
 		} else if (c.getCommandType() == Command.SCREEN) {
 			switch (c.getPriority()) {
 			case 1: {
-				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + mpgramUid))) {
+				String r = System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject;1;-Durl=https://t.me/nnmidlets");
+				if ("-11".equals(r)) {
 					f.append("set ipc: " + System.getProperty("cc.nnproject.symbianext.setGlobalData:mpgram_launchUrl;https://t.me/nnmidlets") + "\n");
-					f.append("foreground mpgram: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + mpgramUid) + "\n");
+					f.append("foreground mpgram: " + System.getProperty("cc.nnproject.symbianext.bringMidletToForeground:MPGram;nnproject") + "\n");
 				} else {
-					f.append("launch mpgram: " + System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject;1;-Durl=https://t.me/nnmidlets") + "\n");
+					f.append("launch mpgram: " + r + "\n");
 				}
 				break;
 			}

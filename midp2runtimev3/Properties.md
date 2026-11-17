@@ -93,11 +93,13 @@ Returns 0 if operation was successful
 
 Example:
 ```
-if (!"0".equals(System.getProperty("cc.nnproject.symbianext.bringMidletToForeground:MPGram;nnproject"))) {
-    if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject"))) {
+if ("-11".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject"))) {
+    // app is already running, resume
+    if ("0".equals(System.getProperty("cc.nnproject.symbianext.resumeMidlet:MPGram;nnproject"))) {
         // ...
     }
 }
+
 ```
 
 ---
@@ -332,3 +334,143 @@ Not available on UIQ3.
 ---
 
 
+
+# Reference implementation of launch handling
+
+```java
+static final String SYMEXT = "cc.nnproject.symbianext.";
+static final String IPC_ID = "example";
+
+static boolean started;
+static int launchInstance;
+static boolean launchHandled;
+
+static boolean symbianext;
+
+public void startApp() {
+    if (started) {
+        // resumed
+        String p = System.getProperty("com.nokia.mid.cmdline.instance");
+        if (p != null) {
+            // handle Symbian^3 javaapp: launch request
+            int i = Integer.parseInt(p);
+            if (i > launchInstance) {
+                launchInstance = i;
+                handleLaunch(true);
+            }
+        } else if (symbianext) {
+            p = System.getProperty(SYMEXT + "getGlobalData:" + IPC_ID + "_launchUrl");
+            if (p != null && p.length() != 0) {
+                handleLaunch(true);
+            }
+        }
+        return;
+    }
+    started = true;
+    
+    // check symbianext support
+    symbianext = System.getProperty(SYMEXT + "version") != null;
+    if (System.getProperty(SYMEXT + "version") != null) {
+        // allocate chunk
+        System.getProperty(SYMEXT + "createGlobalData:" + IPC_ID + "_launchUrl");
+    }
+    
+    // ...
+    
+    // after loading is done and authorization is checked
+    handleLaunch(false);
+}
+
+static synchronized void handleLaunch(boolean restart) {
+    if (restart && !launchHandled) return;
+    
+    // check if application is ready to handle launch requests
+    // if (authId != null) return;
+    
+    launchHandled = true;
+    try {
+        String cmd = System.getProperty("com.nokia.mid.cmdline.instance");
+        String url = null;
+        if (cmd != null) {
+            launchInstance = Integer.parseInt(cmd);
+        } else {
+            url = System.getProperty(SYMEXT + "getGlobalData:" + IPC_ID + "_launchUrl");
+            if (url != null && url.length() != 0) {
+                // clear launchUrl
+                System.getProperty(SYMEXT + "setGlobalData:" + IPC_ID + "_launchUrl;");
+            } else {
+                url = null;
+            }
+        }
+
+        if (url == null) {
+            // handle Symbian^3 javaapp: and MIDletIntegration launch
+            cmd = System.getProperty("com.nokia.mid.cmdline");
+            if (cmd == null) {
+                cmd = System.getProperty("launchcmd");
+            }
+            if ("empty=1".equals(cmd)) cmd = "";
+
+            if (cmd != null && cmd.length() != 0) {
+                int i = cmd.indexOf("url=");
+                if (i != -1) {
+                    int j = cmd.indexOf(';', i + 4);
+                    url = cmd.substring(i + 4, j == -1 ? cmd.length() : j).trim();
+                }
+            }
+        }
+
+        if (url == null || url.length() == 0) {
+            url = System.getProperty("url");
+        }
+
+        if (url != null && url.length() != 0) {
+            // do something with the url...
+        }
+    } catch (Exception ignored) {}
+    return false;
+}
+```
+
+Add these to MANIFEST.MF:
+```
+Nokia-MIDlet-Launch-Params: url
+Nokia-MIDlet-Background-Event: pause
+```
+
+Full launch request example:
+```java
+static final String SYMEXT = "cc.nnproject.symbianext.";
+
+static boolean launch(String suite, String vendor, String id, String url) {
+    String r = System.getProperty(SYMEXT + "getMidletSuiteVersion:" + suite + ';' + vendor);
+    if (r == null) {
+        // not installed
+        return false;
+    }
+    
+    r = System.getProperty(SYMEXT + "launchMidlet:" + suite + ';' + vendor + (url != null ? ";1;-Durl=" + url : ""));
+    if ("0".equals(r)) {
+        // launched successfully
+        return true;
+    }
+    
+    if ("-11".equals(r)) {
+        // app is already running
+        if (url != null && !"0".equals(System.getProperty(SYMEXT + "setGlobalData:" + id + "_launchUrl;" + url))) {
+            // data chunk not allocated
+            return false;
+        }
+        if ("0".equals(System.getProperty(SYMEXT + "bringMidletToForeground:" + suite + ';' + vendor))) {
+            // resumed successfully
+            return true;
+        }
+    }
+    
+    return false;
+}
+```
+
+```
+launch("MPGram", "nnproject", "mpgram", "https://t.me/nnmidlets");
+```

@@ -1,0 +1,19 @@
+TARGET lcdg2.dll
+TARGETTYPE dll
+UID 0x1000008d 0xe147b6b6
+VENDORID 0x70000001
+
+#ifdef EKA2
+CAPABILITY ALL -TCB
+ARMFPU softvfp
+#endif
+
+SYSTEMINCLUDE \epoc32\include
+USERINCLUDE ..\inc
+
+SOURCEPATH ..\src
+SOURCE lcdg2.cpp
+
+nostrictdef
+
+LIBRARY euser.lib

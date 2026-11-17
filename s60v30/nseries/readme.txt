@@ -9,13 +9,18 @@ increased bytecode size limit for jit compilation from 1000 to 16000
 replaced "MidiClient{000a0000}[101f7d00].dll" import with "MidiClien2{000a0000}[201f7d00].dll" wrapper for volume control support
 removed connection filters for 80 and 443 ports access
 replaced load of midp2runtimev2.dll with midp2runtimev3.dll wrapper for custom dynamic system properties
+replaced load of lcdgr.dll with lcdg2.dll wrapper
+patched CMIDToolkit::HandleForegroundL to add Nokia-MIDlet-Background-Event support
 
 patch in hex:
 46546-4654B: 75 F0 F6 EC 05 90 -> 00 00 00 00 00 20
+6F92C-6F931: 00 6D 88 34 07 00 -> 07 00 00 6D 88 34
+6F934-6F935: 28 37 -> 00 00
 7D30B: 00 -> 01
 9C12F: E1 -> E0
 9C265-9C26F: 55 73 65 4A 61 72 43 61 63 68 65 -> 63 6F 6D 70 00 00 00 00 00 00 00
 9C275-9C287: 43 61 63 68 65 4A 61 72 46 69 6C 65 48 61 6E 64 6C 65 73 -> 55 73 65 56 65 72 69 66 69 65 72 00 00 00 00 00 00 00 00
+1CE8A4: 72 -> 32
 1D07AA: 32 -> 33
 1F4717: 74 -> 32
 1F4723: 31 -> 32

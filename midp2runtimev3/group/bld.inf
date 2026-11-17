@@ -4,6 +4,7 @@ DEFAULT
 PRJ_MMPFILES
 midp2runtimev3.mmp
 midp2launcher.mmp
+lcdg2.mmp
 #ifdef EKA2
 midp2runtimev3_uiq.mmp
 nnapi93.mmp
