@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2026 Arman Jussupgaliyev
+*/
+
 #include "cc_nnproject_symbianext_PropertyExtensions.h"
 #include "common.h"
 

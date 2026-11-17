@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2026 Arman Jussupgaliyev
+*/
+
 package cc.nnproject.symbianext;
 
 import com.nokia.mj.impl.vmport.VmPort;

@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2026 Arman Jussupgaliyev
+*/
+
 #include "common.h"
 #include <apgcli.h>
 #include <apgtask.h>

@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2026 Arman Jussupgaliyev
+*/
+
 #include <midiclientutility.h>
 #include <remconcoreapitargetobserver.h>
 #include <remconinterfaceselector.h>

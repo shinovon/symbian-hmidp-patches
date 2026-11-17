@@ -1,3 +1,7 @@
+/*
+Copyright (c) 2026 Arman Jussupgaliyev
+*/
+
 package com.nokia.mj.impl.vmport;
 
 import com.nokia.mj.impl.rt.DynamicProperty;
