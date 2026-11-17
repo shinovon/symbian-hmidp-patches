@@ -3,14 +3,15 @@ SHA1: fedd013434b18c0898f4712c7e760da82ccf362c
 1203528 bytes, 2274656 bytes unpacked
 
 unpacked
-added -UseVerifier to disable preverification
-added -comp to force AoT
+Disabled UseVerifier
+Disabled MixedMode
 increased bytecode size limit for jit compilation from 1500 to 16384
 replaced "MidiClient{000a0000}[101f7d00].dll" import with "MidiClien2{000a0000}[201f7d00].dll" wrapper for volume control support
 removed connection filters for 80 and 443 ports access
 replaced load of midp2runtimev2.dll with midp2runtimev3.dll wrapper for custom dynamic system properties
 replaced load of lcdgr.dll with lcdg2.dll wrapper
 patched CMIDToolkit::HandleForegroundL to add Nokia-MIDlet-Background-Event support
+Set CompilerAreaPercentage to 0
 
 patch in hex:
 4BF16-4BF1B: 75 F0 28 EF 05 90 -> 00 00 00 00 00 20
@@ -24,6 +25,7 @@ A1E19-A1E2B: 43 61 63 68 65 4A 61 72 46 69 6C 65 48 61 6E 64 6C 65 73 -> 55 73 6
 1DC662: 32 -> 33
 20105D: 74 -> 32
 201069: 31 -> 32
+1FD350: 14 -> 00
 
 
 works on e61i

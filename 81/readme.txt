@@ -5,7 +5,7 @@ SHA1: 7aade12753e81ceabf3266c27e92598b012a9b6e
 1898172 bytes
 
 unpacked
-added -comp to force AoT
+Disabled MixedMode
 removed connection filters for 80 and 443 ports access
 replaced load of midp2runtimev2.dll with midp2runtimev3.dll wrapper for custom dynamic system properties
 replaced load of lcdgr.dll with lcdg2.dll wrapper

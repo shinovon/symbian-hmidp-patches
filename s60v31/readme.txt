@@ -5,8 +5,8 @@ SHA1: 85f21f7edadb7f5accad53543de8d404d8d7cba5
 1427225 bytes, 2716428 bytes unpacked
 
 unpacked
-added -UseVerifier to disable preverification
-added -comp to force AoT
+Disabled UseVerifier
+Disabled MixedMode
 changed z: to c: in bcp arg, to enable adding extra classes to c:\private\102033e6\extensions.jar
 increased bytecode size limit for jit compilation from 1500 to 65535
 replaced "midiclient{000a0000}[101f7d00].dll" import with "midiclien2{000a0000}[201f7d00].dll" wrapper for volume control support
@@ -14,6 +14,7 @@ removed connection filters for 80 and 443 ports access
 replaced load of midp2runtimev2.dll with midp2runtimev3.dll wrapper for custom dynamic system properties
 replaced load of lcdgr.dll with lcdg2.dll wrapper
 patched CMIDToolkit::HandleForegroundL to add Nokia-MIDlet-Background-Event support
+Set CompilerAreaPercentage to 0
 
 patch in hex:
 56128-5612F: 06 A8 81 F0 18 EA 05 90 -> 00 00 00 00 00 00 00 20
@@ -29,6 +30,8 @@ B1D30: 5A -> 43
 236F96: 32 -> 33
 2618BD: 74 -> 32
 2618C9: 21 -> 32
+25D508: 14 -> 00
+25D514: 01 -> 00
 
 see midiclien2dll for midi volume control wrapper sources
 

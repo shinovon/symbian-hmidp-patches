@@ -63,6 +63,7 @@ EXPORT_C void* NewFactoryL(int* a, int b) {
 #ifdef EKA2
 	void* r = ((void* (*)(int, int)) lib.Lookup(1))((a[20] + 40), b);
 	int* toolkit = a;
+	
 	int* vtable = (int*) User::AllocL(CMIDToolkit_MMIDObserver_size + 4);
 	Mem::Copy(vtable, ((int**)toolkit)[CMIDToolkit_MMIDObserver_offset], CMIDToolkit_MMIDObserver_size);
 	vtable[4] = vtable[1];
@@ -70,6 +71,7 @@ EXPORT_C void* NewFactoryL(int* a, int b) {
 #else
 	void* r = ((void* (*)(int, int)) lib.Lookup(1))((int) a, b);
 	int* toolkit = (int*) (a - 1)[2];
+	
 	int* vtable = (int*) User::AllocL(CMIDToolkit_MMIDObserver_size + 4);
 	Mem::Copy(vtable, ((int**)toolkit)[CMIDToolkit_MMIDObserver_offset], CMIDToolkit_MMIDObserver_size);
 	vtable[6] = vtable[3];
