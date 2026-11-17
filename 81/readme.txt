@@ -26,4 +26,4 @@ requires copying midp resources from z:\system\data to c
 
 works on n72, should also work on n70 as midp binaries are exact same there
 
-by shinovon, worked on this on 17.10.2026, 31.10.2026, 04.11.2026-07.11.2026
+by shinovon, worked on this on 17.10.2026, 31.10.2026, 04.11.2026-07.11.2026, 17.11.2026

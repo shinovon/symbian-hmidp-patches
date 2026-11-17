@@ -30,4 +30,4 @@ patch in hex:
 
 works on n73me, n91
 
-by shinovon, worked on this on 09.11.2026
+by shinovon, worked on this on 09.11.2026, 17.11.2026

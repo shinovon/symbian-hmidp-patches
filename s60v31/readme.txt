@@ -47,4 +47,4 @@ asd1.rmp and asd2.rmp are first attempts to patch extensions.jar path
 
 classpath extensions can not replace existing classes
 
-by shinovon, worked on this on 03.08.2024, 29.04.2025, 03.02.2026, 27.07.2026, 30.10.2026, 04.11.2026
+by shinovon, worked on this on 03.08.2024, 29.04.2025, 03.02.2026, 27.07.2026, 30.10.2026, 04.11.2026, 15.11.2026-17.11.2026

@@ -3,8 +3,8 @@ SHA1: 861f39382021a2c6fd389e666aecc35117a6f21f
 1200712 bytes, 2299628 bytes unpacked
 
 unpacked
-added -UseVerifier to disable preverification
-added -comp to force AoT
+Disabled UseVerifier
+Disabled MixedMode
 increased bytecode size limit for jit compilation from 6000 to 65535
 removed connection filters for 80 and 443 ports access
 replaced load of midp2runtimev2.dll with midp2runtimev3.dll wrapper for custom dynamic system properties
