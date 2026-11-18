@@ -20,6 +20,8 @@ Copyright (c) 2026 Arman Jussupgaliyev
 #define sizeof_Runtime_vtable 64
 #endif
 
+_LIT(KApiVersion, "1.1");
+
 _LIT(KIsAppInstalledPrefix, "cc.nnproject.symbianext.isAppInstalled:");
 _LIT(KGetInstalledSisVersionPrefix, "cc.nnproject.symbianext.getInstalledSisVersion:");
 _LIT(KLaunchAppPrefix, "cc.nnproject.symbianext.launchApp:");
@@ -32,7 +34,6 @@ _LIT(KBringMidletToForegroundPrefix, "cc.nnproject.symbianext.bringMidletToForeg
 _LIT(KCreateGlobalDataPrefix, "cc.nnproject.symbianext.createGlobalData:");
 _LIT(KSetGlobalDataPrefix, "cc.nnproject.symbianext.setGlobalData:");
 _LIT(KGetGlobalDataPrefix, "cc.nnproject.symbianext.getGlobalData:");
-_LIT(KApiVersion, "1.0");
 
 typedef HBufC* (*TPropertyFunction0)(void*);
 typedef HBufC* (*TPropertyFunction1)(void*, TDesC*);

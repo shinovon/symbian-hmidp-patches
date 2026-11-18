@@ -8,7 +8,7 @@ import com.nokia.mj.impl.vmport.VmPort;
 
 public class PropertyExtensions {
 
-	static final String VERSION = "1.0";
+	static final String VERSION = "1.1";
 	
 	public static String getProperty(String property) {
 		try {
