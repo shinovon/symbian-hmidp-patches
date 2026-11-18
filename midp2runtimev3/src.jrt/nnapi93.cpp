@@ -42,7 +42,7 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppIn
 	(JNIEnv *, jclass, jint aUid)
 {
 	TInt res = 0;
-	TRAP(res, res = DoIsAppInstalledL(TUid::Uid(aUid)));
+	TRAP(res, res = IsAppInstalled(TUid::Uid(aUid)));
 	return res;
 }
 
@@ -50,7 +50,7 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1isAppRu
 	(JNIEnv *, jclass, jint aUid)
 {
 	TInt res = 0;
-	TRAP(res, res = DoIsAppRunningL(TUid::Uid(aUid)));
+	TRAP(res, res = IsAppRunning(TUid::Uid(aUid)));
 	return res;
 }
 
@@ -80,13 +80,13 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAp
 		dataDes.Append(data->Des());
 		delete data;
 		
-		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid), ETrue, TUid::Uid(aMessage), dataDes));
+		TRAPD(err, DoBringAppToForeground(TUid::Uid(aUid), ETrue, TUid::Uid(aMessage), dataDes));
 		
 		delete dataBuf;
 		
 		return err;
 	} else {
-		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid)));	
+		TRAPD(err, DoBringAppToForeground(TUid::Uid(aUid)));	
 		return err;
 	}
 }

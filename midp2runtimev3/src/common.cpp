@@ -43,7 +43,7 @@ TBool DoCheckMbedTlsL() {
 }
 #endif
 
-TBool DoIsAppInstalledL(TUid aUid) {
+TBool IsAppInstalled(TUid aUid) {
 	RApaLsSession ls;
 	User::LeaveIfError(ls.Connect());
 	CleanupClosePushL(ls);
@@ -56,7 +56,7 @@ TBool DoIsAppInstalledL(TUid aUid) {
 	return res;
 }
 
-TBool DoIsAppRunningL(TUid aUid) {
+TBool IsAppRunning(TUid aUid) {
 	RWsSession ws;
 	User::LeaveIfError(ws.Connect());
 	CleanupClosePushL(ws);
@@ -94,7 +94,7 @@ void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc) {
 	CleanupStack::PopAndDestroy(); // ls
 }
 
-TBool DoBringAppToForegroundL(TUid aUid, TBool aSendMessage, TUid aMessageId, const TDesC8& aData) {
+TBool DoBringAppToForeground(TUid aUid, TBool aSendMessage, TUid aMessageId, const TDesC8& aData) {
 	RWsSession ws;
 	User::LeaveIfError(ws.Connect());
 	CleanupClosePushL(ws);
@@ -175,7 +175,7 @@ void DoLaunchMidletL(TPtrC aParam, TPtrC aName, TPtrC aVendor, TUint32 aMidletId
 	MJavaRegistrySuiteEntry* suite = registry->SuiteEntryL(aName, aVendor);
 	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
 	
-	if (DoIsAppRunningL(midlet->UidL())) {
+	if (IsAppRunning(midlet->UidL())) {
 		User::Leave(KErrAlreadyExists);
 	}
 	
@@ -212,7 +212,7 @@ void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
 	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
 	TUid uid = midlet->UidL();
 
-	if (!DoBringAppToForegroundL(uid)) User::Leave(KErrNotFound);
+	if (!DoBringAppToForeground(uid)) User::Leave(KErrNotFound);
 	
 	CleanupStack::PopAndDestroy(); // registry
 	CleanupStack::PopAndDestroy(); // lib

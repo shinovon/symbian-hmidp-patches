@@ -169,7 +169,7 @@ static HBufC* CheckTlsL() {
 		res = _L("mbedtls").AllocL();
 	} else {
 		res = HBufC16::NewL(5);
-		res->Des().Append(KFalse);
+		res->Des().Append(_L("false"));
 	}
 #else
 	RFs fs;
@@ -198,7 +198,7 @@ static HBufC* IsAppInstalledL(TDesC* aProperty) {
 		return NULL;
 	}
 	
-	return BoolToStringL(DoIsAppInstalledL(TUid::Uid(uid)));
+	return BoolToStringL(IsAppInstalled(TUid::Uid(uid)));
 }
 
 static HBufC* IsAppRunningL(TDesC* aProperty) {
@@ -209,7 +209,7 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 		return NULL;
 	}
 
-	return BoolToStringL(DoIsAppRunningL(TUid::Uid(uid)));
+	return BoolToStringL(IsAppRunning(TUid::Uid(uid)));
 }
 
 static HBufC* BringAppToForegroundL(TDesC* aProperty) {
@@ -246,11 +246,11 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 		TPtr8 dataDes = dataBuf->Des();
 		dataDes.Append(data);
 		
-		success = DoBringAppToForegroundL(TUid::Uid(uid), ETrue, TUid::Uid(messageId), dataDes);
+		success = DoBringAppToForeground(TUid::Uid(uid), ETrue, TUid::Uid(messageId), dataDes);
 		
 		CleanupStack::PopAndDestroy(); // dataBuf
 	} else {
-		success = DoBringAppToForegroundL(TUid::Uid(uid));
+		success = DoBringAppToForeground(TUid::Uid(uid));
 	}
 
 	return BoolToStringL(success);
