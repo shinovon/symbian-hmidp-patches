@@ -32,8 +32,6 @@ _LIT(KBringMidletToForegroundPrefix, "cc.nnproject.symbianext.bringMidletToForeg
 _LIT(KCreateGlobalDataPrefix, "cc.nnproject.symbianext.createGlobalData:");
 _LIT(KSetGlobalDataPrefix, "cc.nnproject.symbianext.setGlobalData:");
 _LIT(KGetGlobalDataPrefix, "cc.nnproject.symbianext.getGlobalData:");
-_LIT(KTrue, "true");
-_LIT(KFalse, "false");
 _LIT(KApiVersion, "1.0");
 
 typedef HBufC* (*TPropertyFunction0)(void*);
@@ -46,15 +44,32 @@ static TBool ParseInt(TPtrC aDes, TUint32& aVal) {
 	return lexer.Val(aVal, hex ? EHex : EDecimal) == KErrNone;
 }
 
+static HBufC* BoolToStringL(TBool aBool) {
+	HBufC* res;
+	if (aBool) {
+		res = HBufC16::NewL(4);
+		res->Des().Append(_L("true"));
+	} else {
+		res = HBufC16::NewL(5);
+		res->Des().Append(_L("false"));
+	}
+	return res;
+}
+
+static HBufC* IntToStringL(TInt aInt) {
+	HBufC* res = HBufC16::NewL(16);
+	res->Des().AppendFormat(_L("%d"), aInt);
+	return res;
+}
+
 static HBufC* GetVersionL() {
-	HBufC* res = HBufC16::NewLC(8);
+	HBufC* res = HBufC16::NewL(8);
 	res->Des().Append(KApiVersion);
-	CleanupStack::Pop();
 	return res;
 }
 
 static HBufC* GetVariantL() {
-	HBufC* res = HBufC16::NewLC(10);
+	HBufC* res = HBufC16::NewL(10);
 	// jrt1 on j9
 #ifdef EKA2
 #ifdef UIQ
@@ -65,7 +80,6 @@ static HBufC* GetVariantL() {
 #else
 	res->Des().Append(_L("hmidps60v2"));
 #endif
-	CleanupStack::Pop();
 	return res;
 }
 
@@ -153,9 +167,8 @@ static HBufC* CheckTlsL() {
 	if (DoCheckMbedTlsL()) {
 		res = _L("mbedtls").AllocL();
 	} else {
-		res = HBufC16::NewLC(5);
+		res = HBufC16::NewL(5);
 		res->Des().Append(KFalse);
-		CleanupStack::Pop();
 	}
 #else
 	RFs fs;
@@ -184,17 +197,7 @@ static HBufC* IsAppInstalledL(TDesC* aProperty) {
 		return NULL;
 	}
 	
-	HBufC* res = NULL;
-	if (DoIsAppInstalledL(TUid::Uid(uid))) {
-		res = HBufC16::NewLC(4);
-		res->Des().Append(KTrue);
-		CleanupStack::Pop();
-	} else {
-		res = HBufC16::NewLC(5);
-		res->Des().Append(KFalse);
-		CleanupStack::Pop();
-	}
-	return res;
+	return BoolToStringL(DoIsAppInstalledL(TUid::Uid(uid)));
 }
 
 static HBufC* IsAppRunningL(TDesC* aProperty) {
@@ -205,40 +208,51 @@ static HBufC* IsAppRunningL(TDesC* aProperty) {
 		return NULL;
 	}
 
-	HBufC* res = NULL;
-	if (DoIsAppRunningL(TUid::Uid(uid))) {
-		res = HBufC16::NewLC(4);
-		res->Des().Append(KTrue);
-		CleanupStack::Pop();
-	} else {
-		res = HBufC16::NewLC(5);
-		res->Des().Append(KFalse);
-		CleanupStack::Pop();
-	}
-	return res;
+	return BoolToStringL(DoIsAppRunningL(TUid::Uid(uid)));
 }
 
 static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 	if ((TUint32)aProperty->Length() <= KBringAppToForegroundPrefix.iTypeLength) return NULL;
 	
-	// TODO
+	TPtrC param = aProperty->Mid(KBringAppToForegroundPrefix.iTypeLength);
 	
 	TUint32 uid;
-	if (!ParseInt(aProperty->Mid(KBringAppToForegroundPrefix.iTypeLength), uid)) {
-		return NULL;
+	TBool sendMessage = EFalse;
+	TUint32 messageId;
+	TPtrC data(KNullDesC);
+	{
+		TPtrC uidDes = param;
+		TInt splitIdx = param.Locate(';');
+		if (splitIdx != -1) {
+			TPtrC messageIdDes = param.Mid(splitIdx + 1);
+			uidDes.Set(param.Left(splitIdx));
+			
+			splitIdx = messageIdDes.Locate(';');
+			if (splitIdx == -1) return NULL;
+
+			data.Set(messageIdDes.Mid(splitIdx + 1));
+			messageIdDes.Set(messageIdDes.Left(splitIdx));
+			
+			if (!ParseInt(messageIdDes, messageId)) return NULL;
+			sendMessage = ETrue;
+		}
+		if (!ParseInt(uidDes, uid)) return NULL;
 	}
 	
-	HBufC* res = NULL;
-	if (DoBringAppToForegroundL(TUid::Uid(uid))) {
-		res = HBufC16::NewLC(4);
-		res->Des().Append(_L("true"));
-		CleanupStack::Pop();
+	TBool success = EFalse;
+	if (sendMessage) {
+		HBufC8* dataBuf = HBufC8::NewLC(data.Length());
+		TPtr8 dataDes = dataBuf->Des();
+		dataDes.Append(data);
+		
+		success = DoBringAppToForegroundL(TUid::Uid(uid), ETrue, TUid::Uid(messageId), dataDes);
+		
+		CleanupStack::PopAndDestroy(); // dataBuf
 	} else {
-		res = HBufC16::NewLC(5);
-		res->Des().Append(_L("false")); // not found
-		CleanupStack::Pop();
+		success = DoBringAppToForegroundL(TUid::Uid(uid));
 	}
-	return res;
+
+	return BoolToStringL(success);
 }
 
 static HBufC* LaunchAppL(TDesC* aProperty) {
@@ -260,11 +274,7 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 	}
 
 	TRAPD(err, DoLaunchAppUidL(TUid::Uid(uid), doc));
-	HBufC* res = res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
-	
-	return res;
+	return IntToStringL(err);
 }
 
 static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
@@ -278,15 +288,14 @@ static HBufC* GetMidletSuiteVersionL(TDesC* aProperty) {
 	TPtrC vendor = param.Mid(splitIdx + 1);
 	
 	TAppVersion version = DoGetMidletSuiteVersionL(name, vendor);
-	HBufC* res = HBufC16::NewLC(16);
+	
+	HBufC* res = HBufC16::NewL(16);
 	TPtr16 des = res->Des();
 	des.AppendNum((TInt)version.iMajor);
 	des.Append('.');
 	des.AppendNum((TInt)version.iMinor);
 	des.Append('.');
 	des.AppendNum((TInt)version.iBuild);
-	CleanupStack::Pop();
-	
 	return res;
 }
 
@@ -311,9 +320,9 @@ static HBufC* GetMidletUidL(TDesC* aProperty) {
 	}
 	
 	TInt32 uid = DoGetMidletUidL(name, vendor, midletId);
-	HBufC* res = HBufC16::NewLC(16);
+	
+	HBufC* res = HBufC16::NewL(16);
 	res->Des().AppendFormat(_L("0x%x"), uid);
-	CleanupStack::Pop();
 	return res;
 }
 
@@ -345,10 +354,7 @@ static HBufC* LaunchMidletL(TDesC* aProperty) {
 	}
 	
 	TRAPD(err, DoLaunchMidletL(param, name, vendor, midletId))
-	HBufC* res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
-	return res;
+	return IntToStringL(err);
 }
 
 static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
@@ -372,11 +378,7 @@ static HBufC* BringMidletToForegroundL(TDesC* aProperty) {
 	}
 	
 	TRAPD(err, DoBringMidletToForegroundL(name, vendor, midletId));
-	HBufC* res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
-	
-	return res;
+	return IntToStringL(err);
 }
 
 static HBufC* CreateGlobalDataL(TDesC* aProperty) {
@@ -391,13 +393,10 @@ static HBufC* CreateGlobalDataL(TDesC* aProperty) {
 	name2.Append(param);
 
 	TRAPD(err, DoCreateGlobalDataL(name2));
-	HBufC* res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
 	
 	CleanupStack::PopAndDestroy(); // nameBuf
 	
-	return res;
+	return IntToStringL(err);
 }
 
 static HBufC* SetGlobalDataL(TDesC* aProperty) {
@@ -417,13 +416,10 @@ static HBufC* SetGlobalDataL(TDesC* aProperty) {
 	name2.Append(name);
 	
 	TRAPD(err, DoSetGlobalDataL(name2, data));
-	HBufC* res = HBufC16::NewLC(16);
-	res->Des().AppendNum((TInt)err);
-	CleanupStack::Pop();
 	
 	CleanupStack::PopAndDestroy(); // nameBuf
-	
-	return res;
+
+	return IntToStringL(err);
 }
 
 static HBufC* GetGlobalDataL(TDesC* aProperty) {
@@ -454,15 +450,14 @@ static HBufC* GetInstalledSisVersionL(TDesC* aProperty) {
 	}
 	
 	TVersion version = DoGetInstalledSisVersionL(TUid::Uid(uid));
-	HBufC* res = res = HBufC::NewLC(16);
+	
+	HBufC* res = res = HBufC::NewL(16);
 	TPtr16 des = res->Des();
 	des.AppendNum((TInt)version.iMajor);
 	des.Append('.');
 	des.AppendNum((TInt)version.iMinor);
 	des.Append('.');
 	des.AppendNum((TInt)version.iBuild);
-	CleanupStack::Pop();
-	
 	return res;
 }
 #endif

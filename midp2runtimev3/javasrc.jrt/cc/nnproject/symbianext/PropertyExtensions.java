@@ -46,6 +46,7 @@ public class PropertyExtensions {
 				boolean sendMessage = false;
 				int message = 0;
 				if (params[1] != null) {
+					if (params[2] == null) return null;
 					message = Integer.parseInt(params[1]);
 					sendMessage = true;
 				}
