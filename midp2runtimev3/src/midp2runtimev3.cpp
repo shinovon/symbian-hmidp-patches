@@ -182,7 +182,7 @@ static HBufC* CheckTlsL() {
 		CleanupStack::Pop();
 	} else {
 		res = HBufC16::NewLC(5);
-		res->Des().Append(KFalse);
+		res->Des().Append(_L("false"));
 		CleanupStack::Pop();
 	}
 	fs.Close();
