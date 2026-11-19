@@ -24,6 +24,8 @@ public class N extends MIDlet implements CommandListener, Runnable {
 		f.addCommand(new Command("Exit", Command.EXIT, 0));
 		f.addCommand(new Command("Start MPGram", Command.SCREEN, 1));
 		f.addCommand(new Command("Start X-Plore", Command.SCREEN, 2));
+		f.addCommand(new Command("Start opera", Command.SCREEN, 3));
+		f.addCommand(new Command("Start s60 browser", Command.SCREEN, 4));
 		f.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(f);
 		
@@ -35,6 +37,7 @@ public class N extends MIDlet implements CommandListener, Runnable {
 			f.append("version: " + System.getProperty("cc.nnproject.symbianext.version") + " (" + System.getProperty("cc.nnproject.symbianext.variant") + ")\n");
 			f.append("ram: " + System.getProperty("com.nokia.memoryramfree") + "\n");
 			f.append("battery: " + System.getProperty("com.nokia.mid.batterylevel") + "\n");
+			f.append("network: " + System.getProperty("com.nokia.network.access") + "\n");
 			f.append("tls: " + System.getProperty("cc.nnproject.symbianext.checkTLS12") + "\n");
 			f.append("xplore: " + System.getProperty("cc.nnproject.symbianext.getInstalledSisVersion:0xa0000bcd") + "\n");
 			f.append("mpgram: " + System.getProperty("cc.nnproject.symbianext.getMidletSuiteVersion:MPGram;nnproject") + "\n");
@@ -64,6 +67,28 @@ public class N extends MIDlet implements CommandListener, Runnable {
 					f.append("foreground x-plore: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:0xa0000bcd") + "\n");
 				} else {
 					f.append("launch x-plore: " + System.getProperty("cc.nnproject.symbianext.launchApp:0xa0000bcd") + "\n");
+				}
+				break;
+			}
+			case 3: {
+				String uid = "0x2002aa96";
+				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppInstalled:0x2000ca78"))) {
+					// uiq
+					uid = "0x2000ca78";
+				}
+				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:"+uid))) {
+					f.append("open opera: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:"+uid+";open;https://nnproject.cc/") + "\n");
+				} else {
+					f.append("launch opera: " + System.getProperty("cc.nnproject.symbianext.launchApp:"+uid+";https://nnproject.cc/") + "\n");
+				}
+				break;
+			}
+			case 4: {
+				String uid = "0x10008d39";
+				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:"+uid))) {
+					f.append("open browser: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:"+uid+";0;4 https://nnproject.cc/") + "\n");
+				} else {
+					f.append("launch browser: " + System.getProperty("cc.nnproject.symbianext.launchApp:"+uid+";4 https://nnproject.cc/") + "\n");
 				}
 				break;
 			}

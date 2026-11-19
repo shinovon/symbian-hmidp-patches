@@ -5,7 +5,6 @@ Copyright (c) 2026 Arman Jussupgaliyev
 #include "common.h"
 #include <apgcli.h>
 #include <apgtask.h>
-#include <apacmdln.h>
 #include <w32std.h>
 #include "mjavaregistry.h"
 #ifdef EKA2
@@ -70,7 +69,7 @@ TBool IsAppRunning(TUid aUid) {
 	return res;
 }
 
-void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc) {
+void DoLaunchAppUidL(TUid aUid, /*TApaCommand aCommand, */const TDesC& aDoc) {
 	RApaLsSession ls;
 	User::LeaveIfError(ls.Connect());
 	CleanupClosePushL(ls);
@@ -84,14 +83,18 @@ void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc) {
 	} else {
 		CApaCommandLine* cli = CApaCommandLine::NewLC();
 		cli->SetExecutableNameL(appInfo.iFullName);
+//		if (aDoc.Length() != 0) {
+//			cli->SetDocumentNameL(aDoc);
+//		}
+//		cli->SetCommandL(aCommand);
+		
 		User::LeaveIfError(ls.StartApp(*cli));
 		CleanupStack::PopAndDestroy(); // cli
 	}
-
 	CleanupStack::PopAndDestroy(); // ls
 }
 
-TBool DoBringAppToForeground(TUid aUid, TBool aSendMessage, TUid aMessageId, const TDesC8& aData) {
+void DoBringAppToForegroundL(TUid aUid, TInt aSendMessage, TUid aMessageId, TPtrC aData) {
 	RWsSession ws;
 	User::LeaveIfError(ws.Connect());
 	CleanupClosePushL(ws);
@@ -99,16 +102,20 @@ TBool DoBringAppToForeground(TUid aUid, TBool aSendMessage, TUid aMessageId, con
 	TApaTaskList tasklist(ws);
 	TApaTask task = tasklist.FindApp(aUid);
 
-	TBool res = false;
-	if (task.Exists()) {
-		task.BringToForeground();
-		res = true;
-		if (aSendMessage) task.SendMessage(aMessageId, aData);
+	if (!task.Exists()) User::Leave(KErrNotFound);
+	
+	task.BringToForeground();
+	if (aSendMessage == 1) {
+		HBufC8* dataBuf = HBufC8::NewLC(aData.Length());
+		dataBuf->Des().Append(aData);
+		User::LeaveIfError(task.SendMessage(aMessageId, *dataBuf));
+		CleanupStack::PopAndDestroy(); // dataBuf
+	} else if (aSendMessage == 2) {
+		TPtrC8 messageBuffer((TUint8*) aData.Ptr(), aData.Length()<<1);
+		User::LeaveIfError(task.SendMessage(KUidApaMessageSwitchOpenFile, messageBuffer));
 	}
 
 	CleanupStack::PopAndDestroy(); // ws
-	
-	return res;
 }
 
 TInt32 DoGetMidletUidL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
@@ -209,7 +216,7 @@ void DoBringMidletToForegroundL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId) {
 	MJavaRegistryMIDletEntry* midlet = suite->MIDletByNumberL(aMidletId);
 	TUid uid = midlet->UidL();
 
-	if (!DoBringAppToForeground(uid)) User::Leave(KErrNotFound);
+	DoBringAppToForegroundL(uid);
 	
 	CleanupStack::PopAndDestroy(); // registry
 	CleanupStack::PopAndDestroy(); // lib

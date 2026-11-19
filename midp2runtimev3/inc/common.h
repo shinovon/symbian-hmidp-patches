@@ -3,6 +3,7 @@ Copyright (c) 2026 Arman Jussupgaliyev
 */
 
 #include <e32base.h>
+#include <apacmdln.h>
 #include "appversion.h"
 
 #ifdef EKA2
@@ -16,8 +17,8 @@ TBool DoCheckMbedTlsL();
 #endif
 TBool IsAppInstalled(TUid aUid);
 TBool IsAppRunning(TUid aUid);
-void DoLaunchAppUidL(TUid aUid, const TDesC& aDoc = KNullDesC());
-TBool DoBringAppToForeground(TUid aUid, TBool aSendMessage = EFalse, TUid aMessageId = TUid::Null(), const TDesC8& aDoc = KNullDesC8());
+void DoLaunchAppUidL(TUid aUid, /*TApaCommand aCommand, */const TDesC& aDoc = KNullDesC());
+void DoBringAppToForegroundL(TUid aUid, TInt aSendMessage = 0, TUid aMessageId = TUid::Null(), TPtrC aDoc = KNullDesC());
 
 TInt32 DoGetMidletUidL(TPtrC aName, TPtrC aVendor, TUint32 aMidletId);
 TAppVersion DoGetMidletSuiteVersionL(TPtrC aName, TPtrC aVendor);

@@ -218,8 +218,8 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 	TPtrC param = aProperty->Mid(KBringAppToForegroundPrefix.iTypeLength);
 	
 	TUint32 uid;
-	TBool sendMessage = EFalse;
-	TUint32 messageId;
+	TInt sendMessage = 0;
+	TUint32 messageId = 0;
 	TPtrC data(KNullDesC);
 	{
 		TPtrC uidDes = param;
@@ -234,26 +234,18 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 			data.Set(messageIdDes.Mid(splitIdx + 1));
 			messageIdDes.Set(messageIdDes.Left(splitIdx));
 			
-			if (!ParseInt(messageIdDes, messageId)) return NULL;
-			sendMessage = ETrue;
+			if (!messageIdDes.Compare(_L("open"))) {
+				sendMessage = 2;
+			} else {
+				if (!ParseInt(messageIdDes, messageId)) return NULL;
+				sendMessage = 1;
+			}
 		}
 		if (!ParseInt(uidDes, uid)) return NULL;
 	}
 	
-	TBool success = EFalse;
-	if (sendMessage) {
-		HBufC8* dataBuf = HBufC8::NewLC(data.Length());
-		TPtr8 dataDes = dataBuf->Des();
-		dataDes.Append(data);
-		
-		success = DoBringAppToForeground(TUid::Uid(uid), ETrue, TUid::Uid(messageId), dataDes);
-		
-		CleanupStack::PopAndDestroy(); // dataBuf
-	} else {
-		success = DoBringAppToForeground(TUid::Uid(uid));
-	}
-
-	return BoolToStringL(success);
+	TRAPD(err, DoBringAppToForegroundL(TUid::Uid(uid), sendMessage, TUid::Uid(messageId), data));
+	return IntToStringL(err);
 }
 
 static HBufC* LaunchAppL(TDesC* aProperty) {
@@ -274,7 +266,7 @@ static HBufC* LaunchAppL(TDesC* aProperty) {
 		}
 	}
 
-	TRAPD(err, DoLaunchAppUidL(TUid::Uid(uid), doc));
+	TRAPD(err, DoLaunchAppUidL(TUid::Uid(uid), /*doc.Length() != 0 ? EApaCommandOpen : EApaCommandRun, */doc));
 	return IntToStringL(err);
 }
 

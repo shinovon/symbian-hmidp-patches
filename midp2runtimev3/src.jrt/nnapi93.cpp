@@ -73,20 +73,15 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAp
 {
 	if (aSendMessage) {
 		if (!aData) return KErrArgument;
-		
 		HBufC* data = jstringToDes(aEnv, aData);
-		HBufC8* dataBuf = HBufC8::New(data->Length());
-		TPtr8 dataDes = dataBuf->Des();
-		dataDes.Append(data->Des());
+		
+		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid), ETrue, TUid::Uid(aMessage), data->Des()));
+		
 		delete data;
-		
-		TRAPD(err, DoBringAppToForeground(TUid::Uid(aUid), ETrue, TUid::Uid(aMessage), dataDes));
-		
-		delete dataBuf;
 		
 		return err;
 	} else {
-		TRAPD(err, DoBringAppToForeground(TUid::Uid(aUid)));	
+		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid)));	
 		return err;
 	}
 }

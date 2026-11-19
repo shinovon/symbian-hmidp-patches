@@ -71,12 +71,7 @@ Parameters:
 
 Returns 0 if operation was successful, -11 if midlet is already running, or any other error code
 
-Example:
-```
-if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject;1;-Dasd=dsa -Ddsa=asd"))) {
-    // ...
-}
-```
+See example in bringMidletToForeground below.
 
 ---
 
@@ -95,7 +90,7 @@ Example:
 ```
 if ("-11".equals(System.getProperty("cc.nnproject.symbianext.launchMidlet:MPGram;nnproject"))) {
     // app is already running, resume
-    if ("0".equals(System.getProperty("cc.nnproject.symbianext.resumeMidlet:MPGram;nnproject"))) {
+    if ("0".equals(System.getProperty("cc.nnproject.symbianext.bringMidletToForeground:MPGram;nnproject"))) {
         // ...
     }
 }
@@ -229,21 +224,15 @@ if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:0xa00
 
 ### `cc.nnproject.symbianext.launchApp:<uid>[,<document>]`
 
-Launches Symbian application by UID
+Launches Symbian application by UID, similar to `localapp://native/launch?application-uid=<uid>;content=<document>` on Symbian^3
 
 Parameters:
 - uid: Application UID (decimal, or hexadecimal with 0x)
-- document: ApaCommandLine document path, optional
+- document: document name, optional
 
 Returns 0 if operation was successful, otherwise numeric error code
 
-Example:
-```
-// Launch CorePlayer
-if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:0x20012fa6"))) {
-    // ...
-}
-```
+See example in bringAppToForeground below.
 
 ---
 
@@ -253,19 +242,19 @@ Brings application to foreground if it is running, optionally sends a message.
 
 Parameters:
 - uid: Application UID (decimal, or hexadecimal with 0x)
-- message: Message UID (decimal), optional
-- data: Message parameters (non-Unicode), optional
+- message: `open`, or Message UID (decimal, or hexadecimal with 0x), optional
+- data: File name if message is `open`, or non-Unicode message data, optional
 
-Returns true if operation was successful, false otherwise
+Returns 0 if operation was successful, otherwise numeric error code
 
 Example:
 ```
-String browserUid = "0x10008d39";
-if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + browserUid))) {
-    if ("true".equals(System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + browserUid + ";0;http://nnproject.cc/"))) {
+String operaUid = "0x2002aa96";
+if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:" + operaUid))) {
+    if ("true".equals(System.getProperty("cc.nnproject.symbianext.bringAppToForeground:" + operaUid + ";open;https://nnproject.cc/"))) {
         // ...
     }
-} else if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:" + browserUid + ";http://nnproject.cc/"))) {
+} else if ("0".equals(System.getProperty("cc.nnproject.symbianext.launchApp:" + operaUid + ";https://nnproject.cc/"))) {
     // ...
 }
 ```
