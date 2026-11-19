@@ -3,6 +3,7 @@ SHA1: 276a719645d65f707105aeed996015749369dbc4
 1181848 bytes, 2219412 bytes unpacked
 
 unpacked
+added SwEvent capability
 Disabled UseVerifier
 Disabled MixedMode
 increased bytecode size limit for jit compilation from 1000 to 16000
@@ -30,4 +31,4 @@ patch in hex:
 
 works on n73me, n91
 
-by shinovon, worked on this on 09.11.2026, 17.11.2026
+by shinovon, worked on this on 09.11.2026, 17.11.2026, 19.11.2026

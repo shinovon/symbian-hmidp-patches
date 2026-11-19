@@ -5,6 +5,7 @@ SHA1: 695bb9a44e4280ff9d9df81d06fdcaaf3727a502
 1203722 bytes, 2304924 bytes unpacked
 
 unpacked
+Added SwEvent capability
 Disabled UseVerifier
 Disabled MixedMode
 increased bytecode size limit for jit compilation from 6000 to 65535
@@ -26,4 +27,4 @@ take midp2runtimev3.dll from midp2runtimev3dll
 
 works on p1i
 
-by shinovon, worked on this on 31.10.2026, 17.11.2026
+by shinovon, worked on this on 31.10.2026, 17.11.2026, 19.11.2026

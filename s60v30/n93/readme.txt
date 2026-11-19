@@ -3,6 +3,7 @@ SHA1: ac4946ef3907ddaab6c43c56d10a8c360d8a41b9
 1181838 bytes, 2219304 bytes unpacked
 
 unpacked
+added SwEvent capability
 Disabled UseVerifier
 Disabled MixedMode
 increased bytecode size limit for jit compilation from 1000 to 16000
@@ -27,4 +28,4 @@ patch in hex:
 
 not tested
 
-by shinovon, worked on this on 09.11.2026, 17.11.2026
+by shinovon, worked on this on 09.11.2026, 17.11.2026, 19.11.2026

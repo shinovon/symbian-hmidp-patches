@@ -3,6 +3,7 @@ SHA1: fedd013434b18c0898f4712c7e760da82ccf362c
 1203528 bytes, 2274656 bytes unpacked
 
 unpacked
+added SwEvent capability
 Disabled UseVerifier
 Disabled MixedMode
 increased bytecode size limit for jit compilation from 1500 to 16384
@@ -30,4 +31,4 @@ A1E19-A1E2B: 43 61 63 68 65 4A 61 72 46 69 6C 65 48 61 6E 64 6C 65 73 -> 55 73 6
 
 works on e61i
 
-by shinovon, worked on this on 09.11.2026, 11.11.2026, 17.11.2026
+by shinovon, worked on this on 09.11.2026, 11.11.2026, 17.11.2026, 19.11.2026

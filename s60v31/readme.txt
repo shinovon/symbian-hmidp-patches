@@ -5,6 +5,7 @@ SHA1: 85f21f7edadb7f5accad53543de8d404d8d7cba5
 1427225 bytes, 2716428 bytes unpacked
 
 unpacked
+added SwEvent capability
 Disabled UseVerifier
 Disabled MixedMode
 changed z: to c: in bcp arg, to enable adding extra classes to c:\private\102033e6\extensions.jar
@@ -47,4 +48,4 @@ asd1.rmp and asd2.rmp are first attempts to patch extensions.jar path
 
 classpath extensions can not replace existing classes
 
-by shinovon, worked on this on 03.08.2024, 29.04.2025, 03.02.2026, 27.07.2026, 30.10.2026, 04.11.2026, 15.11.2026-17.11.2026
+by shinovon, worked on this on 03.08.2024, 29.04.2025, 03.02.2026, 27.07.2026, 30.10.2026, 04.11.2026, 15.11.2026-17.11.2026, 19.11.2026
