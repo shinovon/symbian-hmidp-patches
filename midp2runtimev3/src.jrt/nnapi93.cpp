@@ -69,13 +69,13 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchA
 }
 
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground
-	(JNIEnv *aEnv, jclass, jint aUid, jboolean aSendMessage, jint aMessage, jstring aData)
+	(JNIEnv *aEnv, jclass, jint aUid, jint aMessage, jint aMessageId, jstring aData)
 {
 	if (aSendMessage) {
 		if (!aData) return KErrArgument;
 		HBufC* data = jstringToDes(aEnv, aData);
 		
-		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid), ETrue, TUid::Uid(aMessage), data->Des()));
+		TRAPD(err, DoBringAppToForegroundL(TUid::Uid(aUid), aMessage, TUid::Uid(aMessageId), data->Des()));
 		
 		delete data;
 		

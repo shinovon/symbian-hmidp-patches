@@ -113,6 +113,9 @@ void DoBringAppToForegroundL(TUid aUid, TInt aSendMessage, TUid aMessageId, TPtr
 	} else if (aSendMessage == 2) {
 		TPtrC8 messageBuffer((TUint8*) aData.Ptr(), aData.Length()<<1);
 		User::LeaveIfError(task.SendMessage(KUidApaMessageSwitchOpenFile, messageBuffer));
+	} else if (aSendMessage == 3) {
+		TPtrC8 messageBuffer((TUint8*) aData.Ptr(), aData.Length()<<1);
+		User::LeaveIfError(task.SendMessage(KUidApaMessageSwitchCreateFile, messageBuffer));
 	}
 
 	CleanupStack::PopAndDestroy(); // ws

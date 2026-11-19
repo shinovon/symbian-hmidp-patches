@@ -242,8 +242,8 @@ Brings application to foreground if it is running, optionally sends a message.
 
 Parameters:
 - uid: Application UID (decimal, or hexadecimal with 0x)
-- message: `open`, or Message UID (decimal, or hexadecimal with 0x), optional
-- data: File name if message is `open`, or non-Unicode message data, optional
+- message: `open`, `create`, or Message UID (decimal, or hexadecimal with 0x), optional
+- data: File name if message is `open` or `create`, or non-Unicode message data, optional
 
 Returns 0 if operation was successful, otherwise numeric error code
 

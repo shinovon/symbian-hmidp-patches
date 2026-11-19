@@ -236,6 +236,8 @@ static HBufC* BringAppToForegroundL(TDesC* aProperty) {
 			
 			if (!messageIdDes.Compare(_L("open"))) {
 				sendMessage = 2;
+			} else if (!messageIdDes.Compare(_L("create"))) {
+				sendMessage = 3;
 			} else {
 				if (!ParseInt(messageIdDes, messageId)) return NULL;
 				sendMessage = 1;

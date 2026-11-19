@@ -43,15 +43,21 @@ public class PropertyExtensions {
 				String[] params = parseParams(property, 3, 1);
 				if (params == null) return null;
 
-				boolean sendMessage = false;
 				int message = 0;
+				int messageId = 0;
 				if (params[1] != null) {
 					if (params[2] == null) return null;
-					message = Integer.parseInt(params[1]);
-					sendMessage = true;
+					if ("open".equals(params[1])) {
+						message = 2;
+					} else if ("create".equals(params[1])) {
+						message = 3;
+					} else {
+						messageId = Integer.parseInt(params[1]);
+						message = 1;
+					}
 				}
 
-				return Integer.toString(_bringAppToForeground(getIntUid(params[0]), sendMessage, message, params[2]));
+				return Integer.toString(_bringAppToForeground(getIntUid(params[0]), message, messageId, params[2]));
 			}
 			if (property.startsWith("cc.nnproject.symbianext.getMidletUid:")) {
 				String[] params = parseParams(property, 3, 2);
@@ -181,7 +187,7 @@ public class PropertyExtensions {
 	private static native int _isAppInstalled(int uid);
 	private static native int _isAppRunning(int uid);
 	private static native int _launchApp(int uid, String doc);
-	private static native int _bringAppToForeground(int uid, boolean sendMessage, int message, String data);
+	private static native int _bringAppToForeground(int uid, int message, int messageId, String data);
 	
 	private static native int _getMidletUid(String name, String vendor, int num);
 	private static native int _getMidletSuiteVersion(String name, String vendor, int[] out);

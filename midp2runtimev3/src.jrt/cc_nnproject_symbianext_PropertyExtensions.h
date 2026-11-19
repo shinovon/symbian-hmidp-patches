@@ -42,10 +42,10 @@ JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1launchA
 /*
  * Class:     cc_nnproject_symbianext_PropertyExtensions
  * Method:    _bringAppToForeground
- * Signature: (IZILjava/lang/String;)I
+ * Signature: (IIILjava/lang/String;)I
  */
 JNIEXPORT jint JNICALL Java_cc_nnproject_symbianext_PropertyExtensions__1bringAppToForeground
-  (JNIEnv *, jclass, jint, jboolean, jint, jstring);
+  (JNIEnv *, jclass, jint, jint, jint, jstring);
 
 /*
  * Class:     cc_nnproject_symbianext_PropertyExtensions
