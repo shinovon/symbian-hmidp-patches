@@ -24,8 +24,9 @@ public class N extends MIDlet implements CommandListener, Runnable {
 		f.addCommand(new Command("Exit", Command.EXIT, 0));
 		f.addCommand(new Command("Start MPGram", Command.SCREEN, 1));
 		f.addCommand(new Command("Start X-Plore", Command.SCREEN, 2));
-		f.addCommand(new Command("Start opera", Command.SCREEN, 3));
-		f.addCommand(new Command("Start s60 browser", Command.SCREEN, 4));
+		f.addCommand(new Command("Start Opera Mobile", Command.SCREEN, 3));
+		f.addCommand(new Command("Start S60 Browser", Command.SCREEN, 4));
+		f.addCommand(new Command("Start CorePlayer", Command.SCREEN, 5));
 		f.setCommandListener(this);
 		Display.getDisplay(this).setCurrent(f);
 		
@@ -89,6 +90,15 @@ public class N extends MIDlet implements CommandListener, Runnable {
 					f.append("open browser: " + System.getProperty("cc.nnproject.symbianext.bringAppToForeground:"+uid+";0;4 https://nnproject.cc/") + "\n");
 				} else {
 					f.append("launch browser: " + System.getProperty("cc.nnproject.symbianext.launchApp:"+uid+";4 https://nnproject.cc/") + "\n");
+				}
+				break;
+			}
+			case 5: {
+				String uid = "0x20012fa6";
+				if ("true".equals(System.getProperty("cc.nnproject.symbianext.isAppRunning:"+uid))) {
+					f.append("coreplayer already running\n");
+				} else {
+					f.append("launch coreplayer: " + System.getProperty("cc.nnproject.symbianext.launchApp:"+uid+";E:\\video.mp4") + "\n");
 				}
 				break;
 			}
